@@ -6,11 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build_doc": "webdoc",
+    "preview_doc": "serve ./docs/",
+    "docs": "webdoc && serve ./docs/"
   },
   "devDependencies": {
     "@vituum/vite-plugin-twig": "^1.0.0",
     "@webdoc/cli": "^2.2.0",
+    "serve": "^14.2.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   },
