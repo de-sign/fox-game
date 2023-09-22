@@ -5,22 +5,26 @@ import { EVENT_NAME } from '..';
  * Controller Set class.
  */
 export class InputControllerSet {
+    
+
+    /** Last tick time of Controller update. */
+    public nUpdate: number = 0;
+
 
     /** List of Controller */
     private _aControllers: Array<InputController> = [];
     /** Last Updated Controller */
     private _oActiveController: InputController | null = null;
-    
-    /** Last tick time of Controller update. */
-    public nUpdate: number = 0;
 
+
+    /** Constructor */
     constructor(_aControllers?: Array<InputController>){
-
         if( _aControllers?.length ){
             this._oActiveController = _aControllers[0];
             this.add.apply(this, _aControllers);
         }
     }
+
 
     /** Add Controler at set. */
     public add( ...aControllers: Array<InputController> ): InputControllerSet {
@@ -33,6 +37,7 @@ export class InputControllerSet {
             // Écouteur d'EVENT sur une MAJ
             oController.on(EVENT_NAME.INPUT_CONTROLLER_UPDATE, () => {
                 this._oActiveController = oController;
+                this.nUpdate = oController.nUpdate;
             } );
         } );
 
@@ -43,6 +48,7 @@ export class InputControllerSet {
     public getActive(): InputController | null {
         return this._oActiveController;
     }
+    
 
     /** Return if Button of one Controller is pressed. */
     public isPressed(sName: string): boolean {

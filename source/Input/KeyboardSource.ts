@@ -1,5 +1,7 @@
+// Imports
+import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Engine/Constants';
 import { InputManager, InputSource } from './';
-import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Utils/Constants';
+
 
 // Liste des valeurs par type d'EVENT
 const oTypeMap: { [key: string]: number } = {
@@ -7,6 +9,7 @@ const oTypeMap: { [key: string]: number } = {
     keypress: 1.0, // DEPRECATED ! - not recommended
     keyup: 0.0
 };
+
 
 /**
  * Keyboard Source class for Input manager.
@@ -22,12 +25,15 @@ export class KeyboardSource extends InputSource {
     /** Flag for update name with KeyboardEvent if Keyboard API not supported.*/
     private _bUpdateButtonsName: boolean = false;
     
+
+    /** Constructor */
     constructor(oInput: InputManager, sName: string) {
         super(oInput, INPUT_SOURCE_TYPE.KEYBOARD, sName);
 
         // MAJ des noms des boutons via KeyboardAPI
         this._createButtonsName();
     }
+
 
     /** Update of Button states via states change catch during a tick. */
     public update(): boolean {
@@ -73,6 +79,7 @@ export class KeyboardSource extends InputSource {
             this._oButtonsName[eEvent.code] = eEvent.key;
         }
     }
+
 
     /**
      * Create list of button name with Keyboard API.

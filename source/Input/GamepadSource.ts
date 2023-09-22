@@ -1,16 +1,17 @@
+// Imports
+import {
+    EVENT_NAME, INPUT_SOURCE_TYPE,
+    GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME
+} from '../Engine/Constants';
 import { InputManager, InputSource } from './';
-import { EVENT_NAME, INPUT_SOURCE_TYPE, GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME } from '../Utils/Constants';
+
 
 /**
  * Gamepad Source class for Input manager.
  * @class
  */
 export class GamepadSource extends InputSource {
-
-    /** List of Button name define by Constants. */
-    protected _oButtonsName: { [key: string]: string } = {};
-    /** Gamepad of source from Gamepad API. */
-    private _oGamepad: Gamepad | null;
+    
     
     /** Index of source */
     public readonly nIndex: number;
@@ -18,7 +19,15 @@ export class GamepadSource extends InputSource {
     public readonly sIdentifier: string;
     /** Connection Gamepad state */
     public bConnected: boolean = true;
+
+
+    /** List of Button name define by Constants. */
+    protected _oButtonsName: { [key: string]: string } = {};
+    /** Gamepad of source from Gamepad API. */
+    private _oGamepad: Gamepad | null;
     
+
+    /** Constructor */
     constructor(oInput: InputManager, sName: string, oGamepad: Gamepad) {
 
         super(oInput, INPUT_SOURCE_TYPE.GAMEPAD, sName);
@@ -31,6 +40,7 @@ export class GamepadSource extends InputSource {
         // Création de nom de bouton
         this._createButtonsName();
     }
+
 
     /** Update of Button states via states change detected during a tick. */
     public update(): boolean {
@@ -122,6 +132,7 @@ export class GamepadSource extends InputSource {
 
         return bUpdated;
     }
+
 
     /**
      * Create list of button name with Keyboard API.

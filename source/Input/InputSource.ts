@@ -1,7 +1,9 @@
-import { utils } from 'pixi.js';
+// Imports
+import EventEmitter from 'eventemitter3';
 
-import { Engine } from '../Engine/Engine';
+import { Engine } from '../Engine';
 import { InputManager, InputController, IControllerOptions } from './';
+
 
 /**
  * Input source button interface.
@@ -13,10 +15,11 @@ export interface ISourceButton {
     nUpdate: number
 }
 
+
 /**
  * Input source class.
  */
-export class InputSource extends utils.EventEmitter {
+export class InputSource extends EventEmitter {
 
     /** Input that created the source. */
     public readonly oEngine: Engine;
@@ -30,11 +33,14 @@ export class InputSource extends utils.EventEmitter {
     /** Last tick time of source update. */
     public nUpdate: number = 0;
 
+
     /** List of Button states. */
     protected _oButtons: { [key: string]: ISourceButton } = {};
     /** List of Button name define by inherit. */
     protected _oButtonsName: { [key: string]: string } = {};
 
+
+    /** Constructor */
     constructor(oInput: InputManager, nType: number, sKey: string) {
         super();
         
@@ -44,21 +50,23 @@ export class InputSource extends utils.EventEmitter {
         this.nType = nType;
         this.sKey = sKey;
     }
+
+    /** Destructor */
+    public destroy(): void {
+        this.removeAllListeners();
+    }
     
+
     /** Update of Button states via inherite. */
     public update(): boolean {
         return false;
-    }
-
-    /** Create a Controller */
-    public createController(oOptions: IControllerOptions): InputController {
-        return this.oInput.createController(this, oOptions);
     }
 
     /** Catch event and list button states change for next update tick. */
     public addEvent(eEvent: Event): void {
         console.log('InputSource.addEvent', this, eEvent);
     }
+
 
     /** Get button and create if not exist. */
     public getButton(sCode: string): ISourceButton {
@@ -67,7 +75,7 @@ export class InputSource extends utils.EventEmitter {
         if( !this._oButtons[sCode] ){
             this._oButtons[sCode] = {
                 sCode: sCode,
-                sName: this.getButtonsName(sCode),
+                sName: this._getButtonsName(sCode),
                 nValue: 0.0,
                 nUpdate: 0
             };
@@ -77,8 +85,14 @@ export class InputSource extends utils.EventEmitter {
         return this._oButtons[sCode];
     }
 
+    /** Create a Controller */
+    public createController(oOptions: IControllerOptions): InputController {
+        return this.oInput.createController(this, oOptions);
+    }
+
+
     /** Get button name defined on _oButtonsName */
-    private getButtonsName(sCode: string): string {
+    private _getButtonsName(sCode: string): string {
         return this._oButtonsName[sCode] || sCode;
     }
 

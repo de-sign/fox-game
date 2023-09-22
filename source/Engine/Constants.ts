@@ -3,7 +3,9 @@ export enum EVENT_NAME {
     ENGINE_START = 'EngineStart',
     ENGINE_STOP = 'EngineStop',
     ENGINE_UPDATE = 'EngineUpdate',
+    ENGINE_POST_UPDATE = 'EnginePostUpdate',
     ENGINE_RENDER = 'EngineRender',
+    ENGINE_POST_RENDER = 'EnginePostRender',
 
     INPUT_UPDATE = 'InputUpdate',
 
@@ -16,6 +18,7 @@ export enum EVENT_NAME {
     INPUT_CONTROLLER_UPDATE = 'InputControllerUpdate'
 }
 
+
 /** ----- INPUT_SOURCE */
 export enum INPUT_SOURCE_TYPE {
     KEYBOARD,
@@ -24,7 +27,27 @@ export enum INPUT_SOURCE_TYPE {
     TOUCH
 }
 
+
 /* ----- GAMEPAD_BUTTON */
+
+/** Mapping DeadZone properties of Gamepad buttons */
+export enum GAMEPAD_BUTTON_DEAD_ZONE {
+    Axe0 = 'nLeftStick',
+    Axe1 = 'nLeftStick',
+    Axe2 = 'nRightStick',
+    Axe3 = 'nRightStick',
+    Axe0Minus = 'nLeftStick',
+    Axe0Plus = 'nLeftStick',
+    Axe1Minus = 'nLeftStick',
+    Axe1Plus = 'nLeftStick',
+    Axe2Minus = 'nRightStick',
+    Axe2Plus = 'nRightStick',
+    Axe3Minus = 'nRightStick',
+    Axe3Plus = 'nRightStick',
+    Button6 = 'nLeftTrigger',
+    Button7 = 'nRightTrigger'
+};
+
 
 /** Generic gamepad button names */
 export enum GAMEPAD_BUTTON_DEFAULT_NAME {

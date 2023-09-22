@@ -1,8 +1,10 @@
-import { utils } from 'pixi.js';
-import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Utils/Constants';
+// Imports
+import EventEmitter from 'eventemitter3';
 
-import { Engine } from '../Engine/Engine';
+import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Engine/Constants';
+import { Engine } from '../Engine';
 import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from '.';
+
 
 /**
  * Input options supplied to constructor.
@@ -32,11 +34,12 @@ const oDefaultInputOptions = {
     }
 };
 
+
 /**
  * Input Manager class.
  * @class
  */
-export class InputManager extends utils.EventEmitter {
+export class InputManager extends EventEmitter {
 
     /** Engine that created the manager. */
     public readonly oEngine: Engine;
@@ -52,9 +55,12 @@ export class InputManager extends utils.EventEmitter {
     /** Gamepad API */
     public aAPIGamepads: Array<Gamepad | null> | null = null;
 
-    /**  */
+
+    /** Input option */
     private _oOptions: IInputOptions;
     
+
+    /** Constructor */
     constructor(oEngine: Engine, oInputOptions?: IInputOptions) {
 
         super();
@@ -83,6 +89,17 @@ export class InputManager extends utils.EventEmitter {
         }
     }
 
+    /** Destructor */
+    public destroy(): void {
+        // Remove Listener
+        this.removeAllListeners();
+
+        // Destroy references
+        Object.values(this.oSources).forEach( oSource => oSource?.destroy() );
+        this.aControllers.forEach( oController => oController.destroy() );
+    }
+
+
     /** Updated all sources and update last tick time if one source updated. */
     public update(): void {
         let bOneSourceUpdated = false;
@@ -110,6 +127,7 @@ export class InputManager extends utils.EventEmitter {
         this.emit(EVENT_NAME.INPUT_UPDATE, bOneSourceUpdated);
     }
 
+
     /** Create a Controller */
     public createController(oSource: InputSource, oOptions?: Partial<IControllerOptions>): InputController {
 
@@ -124,6 +142,7 @@ export class InputManager extends utils.EventEmitter {
 
         return oController;
     }
+
 
     /** Get Source and create if not exist. */
     private _getSource(nType: number, ...aArguments: Array<any>): InputSource | null {
@@ -181,8 +200,8 @@ export class InputManager extends utils.EventEmitter {
             };
 
         // Ajout des écouteurs d'EVENT clavier
-        window.addEventListener('keydown', fListener);
-        window.addEventListener('keyup', fListener);
+        this.oEngine.addWindowListener('keydown', fListener);
+        this.oEngine.addWindowListener('keyup', fListener);
     }
 
     /** Create a Gamepad Source Input. */
