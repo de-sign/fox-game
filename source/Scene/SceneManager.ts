@@ -3,7 +3,6 @@ import EventEmitter from 'eventemitter3';
 
 import { EVENT_NAME } from '../Core/Constants';
 import { Engine } from '../Core';
-import { OutputManager } from '../Output';
 import { Scene } from './Scene';
 
 
@@ -44,7 +43,7 @@ export class SceneManager extends EventEmitter {
         this._oOptions = Object.assign( {}, oDefaultSceneOptions, oSceneOptions );
         
         // Event
-        this.once(EVENT_NAME.ENGINE_START, () => {
+        this.oEngine.once(EVENT_NAME.ENGINE_START, () => {
             // Scene
             if( this._oOptions.cStartingScene ){
                 this.changeScene(this._oOptions.cStartingScene, ...this._oOptions.aStartingSceneArguments || []);
@@ -81,7 +80,7 @@ export class SceneManager extends EventEmitter {
 
     /** Change Current Scene */
     public changeScene(oNewScene: new (oMScene: SceneManager) => Scene, ...aArguments: []): void {
-        this.on(EVENT_NAME.ENGINE_UPDATE, () => {
+        this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
             // Enlève et détruit la scène courante
             this._unsetScene();
 
