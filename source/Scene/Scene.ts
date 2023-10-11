@@ -1,8 +1,10 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
-import { Engine, Store } from '../';
-import { InputManager } from '../Input/';
+import { Engine, Store } from '../Core';
+import { InputManager } from '../Input';
+import { OutputManager } from '../Output';
+import { SceneManager } from './';
 
 
 /**
@@ -19,18 +21,21 @@ export class Scene extends EventEmitter {
     public oStore: Store;
     /** Input Manager */
     public oInput: InputManager;
+    /** Scene Manager */
+    public oScene: SceneManager;
     /** Output Manager */
-    public oOutput = null;
+    public oOutput: OutputManager;
 
 
     /** Constructor */
-    constructor(oEngine: Engine) {
+    constructor(oMScene: SceneManager) {
         super();
 
-        this.oEngine = oEngine;
-        this.oStore = oEngine.oStore;
-        this.oInput = oEngine.oInput;
-        this.oOutput = oEngine.oOutput;
+        this.oEngine = oMScene.oEngine;
+        this.oStore = this.oEngine.oStore;
+        this.oInput = this.oEngine.oInput;
+        this.oScene = oMScene;
+        this.oOutput = this.oEngine.oOutput;
     }
 
     /** Destructor */
@@ -48,7 +53,7 @@ export class Scene extends EventEmitter {
 
     /**
      * Render function call at each tick.
-     * Use to render entities external to the graphics engine.
+     * Use to render entities external to the Output engine.
      * 
      * @example
      * public render(): void {

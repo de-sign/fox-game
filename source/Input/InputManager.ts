@@ -1,8 +1,8 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
-import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Engine/Constants';
-import { Engine } from '../Engine';
+import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Core/Constants';
+import { Engine } from '../Core';
 import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from '.';
 
 
@@ -16,7 +16,7 @@ export interface IInputOptions {
     bTouch?: boolean, // Not DEV for moment.
 
     bAutoCreateController?: boolean,
-    oControllersOptions: { [key: number]: IControllerOptions }
+    oControllersOptions: { [nKey: number]: IControllerOptions }
 }
 
 const oDefaultInputOptions = {
@@ -46,14 +46,14 @@ export class InputManager extends EventEmitter {
     /** Last tick time of one source update. */
     public nUpdate: Number = 0;
     /** List of multiple input created by manager. */
-    public oSources: { [key: string]: InputSource | null} = {};
+    public oSources: { [sKey: string]: InputSource | null} = {};
     /** List of controllers */
-    public aControllers: Array<InputController> = [];
+    public aControllers: InputController[] = [];
 
     /** Keyboard API */
     public oAPIKeyboard: any = null;
     /** Gamepad API */
-    public aAPIGamepads: Array<Gamepad | null> | null = null;
+    public aAPIGamepads: (Gamepad | null)[] | null = null;
 
 
     /** Input option */
@@ -84,7 +84,7 @@ export class InputManager extends EventEmitter {
 
         if( this._oOptions.bAutoCreateController ){
             this.on(EVENT_NAME.INPUT_SOURCE_CREATE, oSource => {
-                oSource.createController();
+                this.createController(oSource);
             } );
         }
     }
@@ -145,7 +145,7 @@ export class InputManager extends EventEmitter {
 
 
     /** Get Source and create if not exist. */
-    private _getSource(nType: number, ...aArguments: Array<any>): InputSource | null {
+    private _getSource(nType: number, ...aArguments: any[]): InputSource | null {
 
         let sKey: string = '',
             oSource: InputSource | null;

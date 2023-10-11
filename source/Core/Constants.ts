@@ -1,5 +1,6 @@
 /** ----- EVENT_NAME */
 export enum EVENT_NAME {
+    // Core
     ENGINE_START = 'EngineStart',
     ENGINE_STOP = 'EngineStop',
     ENGINE_UPDATE = 'EngineUpdate',
@@ -15,7 +16,24 @@ export enum EVENT_NAME {
     INPUT_SOURCE_RECONNECT = 'InputSourceReconnect',
 
     INPUT_CONTROLLER_CREATE = 'InputControllerCreate',
-    INPUT_CONTROLLER_UPDATE = 'InputControllerUpdate'
+    INPUT_CONTROLLER_UPDATE = 'InputControllerUpdate',
+
+    SCENE_UPDATE = 'SceneUpdate',
+    SCENE_RENDER = 'SceneRender',
+    SCENE_INITIALIZE = 'SceneInitialize',
+    SCENE_DESTROY = 'SceneDestroy',
+    SCENE_CHANGE = 'SceneChange',
+    // SCENE_BLUR = 'SceneBlur',
+    // SCENE_FOCUS = 'SceneFocus',
+
+    OUTPUT_RENDER = 'OuputRender',
+    OUTPUT_RESIZE = 'OuputResize',
+
+    // Components
+    MENU_UPDATE = 'MenuUpdate',
+    MENU_MOVE = 'MenuMove',
+    MENU_VALIDATE = 'MenuValidate',
+    MENU_CANCEL = 'MenuCancel',
 }
 
 
@@ -101,4 +119,20 @@ export enum GAMEPAD_BUTTON_XBOX_NAME {
     Button8 = 'View',
     Button9 = 'Menu',
     Button16 = 'Xbox'
+}
+
+
+/** ----- INPUT_SOURCE */
+export enum MENU_CURSOR_VERTICAL {
+    MenuUp = 'previous',
+    MenuDown = 'next',
+    MenuValidate = 'validate',
+    MenuCancel = 'cancel'
+}
+
+export enum MENU_CURSOR_HORIZONTAL {
+    MenuRight = 'next',
+    MenuLeft = 'previous',
+    MenuValidate = 'validate',
+    MenuCancel = 'cancel'
 }

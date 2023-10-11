@@ -6,7 +6,7 @@ import { Engine } from '.';
  * Store options supplied to constructor.
  */
 export interface IStoreOptions {
-    aStorableKeys?: Array<string>
+    aStorableKeys?: string[]
 }
 
 
@@ -24,9 +24,9 @@ export class Store {
     
 
     /** Data saved by the manager. **/
-    private _oData: { [key: string]: any } = {};
+    private _oData: { [sKey: string]: any } = {};
     /** Key stored in LocalStorage when they are set. */
-    private _oStorableKeys: { [key: string]: boolean } = {};
+    private _oStorableKeys: { [sKey: string]: boolean } = {};
     
     
     /** Constructor */

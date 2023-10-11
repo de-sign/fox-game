@@ -7,5 +7,5 @@ export * from './Engine';
 // Store
 export * from './Store';
 
-// Scene
-export * from './Scene';
+// HTML
+export * from './HTML';

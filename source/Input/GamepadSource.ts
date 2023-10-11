@@ -2,7 +2,7 @@
 import {
     EVENT_NAME, INPUT_SOURCE_TYPE,
     GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME
-} from '../Engine/Constants';
+} from '../Core/Constants';
 import { InputManager, InputSource } from './';
 
 
@@ -22,7 +22,7 @@ export class GamepadSource extends InputSource {
 
 
     /** List of Button name define by Constants. */
-    protected _oButtonsName: { [key: string]: string } = {};
+    protected _oButtonsName: { [sKey: string]: string } = {};
     /** Gamepad of source from Gamepad API. */
     private _oGamepad: Gamepad | null;
     
@@ -76,7 +76,7 @@ export class GamepadSource extends InputSource {
                 // MAJ de la valeur des boutons spécifiques
                 const nAbsoluteValue = Math.abs(nValue),
                     sSign = nValue == nAbsoluteValue ? 'Plus' : 'Minus',
-                    oSignValue: { [key: string]: number } = {
+                    oSignValue: { [sKey: string]: number } = {
                         Minus: 0.0,
                         Plus: 0.0
                     };

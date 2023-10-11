@@ -1,8 +1,8 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
-import { EVENT_NAME, GAMEPAD_BUTTON_DEAD_ZONE } from '../Engine/Constants';
-import { Engine, Store } from '../Engine';
+import { EVENT_NAME, GAMEPAD_BUTTON_DEAD_ZONE } from '../Core/Constants';
+import { Engine, Store } from '../Core';
 import { InputManager, InputSource } from '.';
 
 
@@ -40,7 +40,7 @@ const oDefaultDeadZoneOptions: IControllerDeadZoneOptions = {
  * Controller options supplied to constructor.
  */
 export interface IControllerOptions {
-    oMapping: { [key: string]: string },
+    oMapping: { [sKey: string]: string },
     bAutoStore?: boolean,
     oDeadZone?: Partial<IControllerDeadZoneOptions>
 }
@@ -53,7 +53,7 @@ export class InputController extends EventEmitter {
 
 
     /** Static values for index. */
-    private static _oIndex: { [key: string]: number } = {};
+    private static _oIndex: { [sKey: string]: number } = {};
 
     /** Static function for return index. */
     private static _getIndex(sName: string): number {
@@ -78,12 +78,12 @@ export class InputController extends EventEmitter {
     /** Source watch by the controller. */
     private _oSource: InputSource;
     /** List of Button states. */
-    private _oButtons: { [key: string]: IControllerButton } = {};
+    private _oButtons: { [sKey: string]: IControllerButton } = {};
 
     /** Options Controller. */
     private _oOptions: IControllerOptions;
     /** Mapping options of controller. */
-    private _oMapping: { [key: string]: string };
+    private _oMapping: { [sKey: string]: string };
     /** Deadzone options of controller. */
     private _oDeadZone: IControllerDeadZoneOptions;
 
@@ -128,7 +128,7 @@ export class InputController extends EventEmitter {
         }
 
         // Écouteur de MAJ de la source
-        this._oSource.on(EVENT_NAME.INPUT_SOURCE_UPDATE, (aCodeUpdated: Array<string>) => {
+        this._oSource.on(EVENT_NAME.INPUT_SOURCE_UPDATE, (aCodeUpdated: string[]) => {
             this._updateButtons(aCodeUpdated);
         } );
     }
@@ -175,6 +175,14 @@ export class InputController extends EventEmitter {
         return oButton.bPressed && nTickTime == oButton.nPressUpdate;
     }
 
+    /** Return if the button has been held for a while. */
+    public hasHeld(sName: string, nTime: number): boolean {
+        const oButton = this.getButton(sName),
+            nTickTime = this.oEngine.getTickTime();
+
+        return oButton.bPressed && nTickTime >= oButton.nPressUpdate + nTime;
+    }
+
     /** Return if Button has released now. */
     public hasReleased(sName: string): boolean {
         const oButton = this.getButton(sName),
@@ -185,13 +193,13 @@ export class InputController extends EventEmitter {
 
 
     /** Set Mapping and Store. */
-    public setMapping(oMapping: { [key: string]: string }): void {
+    public setMapping(oMapping: { [sKey: string]: string }): void {
         this._oMapping = oMapping;
         this._store();
     }
 
     /** Get Mapping. */
-    public getMapping(): { [key: string]: string } {
+    public getMapping(): { [sKey: string]: string } {
         return this._oMapping;
     }
 
@@ -208,9 +216,9 @@ export class InputController extends EventEmitter {
 
     
     /** Update Button Value. */
-    private _updateButtons(aCode: Array<string>): void {
+    private _updateButtons(aCode: string[]): void {
 
-        const aUpdated: Array<string> = [];
+        const aUpdated: string[] = [];
         
         // Pour chaque Source Button qui ont changés
         aCode.forEach( sCode => {
@@ -253,7 +261,7 @@ export class InputController extends EventEmitter {
                 } );
 
                 // Check if Source Button is pressed with options defined on DeadZone.
-                const sDeadZone = GAMEPAD_BUTTON_DEAD_ZONE[sName as keyof typeof GAMEPAD_BUTTON_DEAD_ZONE],
+                const sDeadZone = GAMEPAD_BUTTON_DEAD_ZONE[sCode as keyof typeof GAMEPAD_BUTTON_DEAD_ZONE],
                     nDeadZone = this._oDeadZone[sDeadZone] || 0.0,
                     bPressed = Math.abs(oSourceButton.nValue) > nDeadZone;
 

@@ -1,7 +1,7 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
-import { Engine } from '../Engine';
+import { Engine } from '../Core';
 import { InputManager, InputController, IControllerOptions } from './';
 
 
@@ -35,9 +35,9 @@ export class InputSource extends EventEmitter {
 
 
     /** List of Button states. */
-    protected _oButtons: { [key: string]: ISourceButton } = {};
+    protected _oButtons: { [sKey: string]: ISourceButton } = {};
     /** List of Button name define by inherit. */
-    protected _oButtonsName: { [key: string]: string } = {};
+    protected _oButtonsName: { [sKey: string]: string } = {};
 
 
     /** Constructor */
@@ -64,7 +64,9 @@ export class InputSource extends EventEmitter {
 
     /** Catch event and list button states change for next update tick. */
     public addEvent(eEvent: Event): void {
-        console.log('InputSource.addEvent', this, eEvent);
+        if( this.oEngine.isDebugMode() ){
+            console.log('InputSource.addEvent', this, eEvent);
+        }
     }
 
 
