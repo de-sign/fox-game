@@ -1,4 +1,5 @@
 // Imports
+import { TData, TValue } from '../Core/Type';
 import {
     EVENT_NAME, INPUT_SOURCE_TYPE,
     GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME
@@ -22,7 +23,7 @@ export class GamepadSource extends InputSource {
 
 
     /** List of Button name define by Constants. */
-    protected _oButtonsName: { [sKey: string]: string } = {};
+    protected _oButtonsName: TData = {};
     /** Gamepad of source from Gamepad API. */
     private _oGamepad: Gamepad | null;
     
@@ -76,7 +77,7 @@ export class GamepadSource extends InputSource {
                 // MAJ de la valeur des boutons spécifiques
                 const nAbsoluteValue = Math.abs(nValue),
                     sSign = nValue == nAbsoluteValue ? 'Plus' : 'Minus',
-                    oSignValue: { [sKey: string]: number } = {
+                    oSignValue: TValue = {
                         Minus: 0.0,
                         Plus: 0.0
                     };

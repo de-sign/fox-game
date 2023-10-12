@@ -1,6 +1,7 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
+import { TObject, TData } from '../Core/Type';
 import { Engine } from '../Core';
 import { InputManager, InputController, IControllerOptions } from './';
 
@@ -35,9 +36,9 @@ export class InputSource extends EventEmitter {
 
 
     /** List of Button states. */
-    protected _oButtons: { [sKey: string]: ISourceButton } = {};
+    protected _oButtons: TObject<ISourceButton> = {};
     /** List of Button name define by inherit. */
-    protected _oButtonsName: { [sKey: string]: string } = {};
+    protected _oButtonsName: TData = {};
 
 
     /** Constructor */

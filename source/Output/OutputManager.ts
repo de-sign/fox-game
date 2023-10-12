@@ -38,6 +38,10 @@ export class OutputManager extends EventEmitter {
     public nWidthScale: number = 1;
     /** Height scale between Height Option and Resize target. */
     public nHeightScale: number = 1;
+    /** Return reference to the renderer's canvas element. */
+    public get view(): any {
+        return null;
+    }
 
     /** Output option */
     protected _oOptions: IOutputOptions;
@@ -80,7 +84,7 @@ export class OutputManager extends EventEmitter {
         this.oEngine.once(EVENT_NAME.ENGINE_START, () => {
             // Insertion du Canvas
             if( this._oOptions.hAppendViewTo ){
-                this._oOptions.hAppendViewTo.append( this.getView() );
+                this._oOptions.hAppendViewTo.append( this.view );
             }
             
             // Mise en echelle
@@ -93,9 +97,6 @@ export class OutputManager extends EventEmitter {
         // Trigger
         this.emit(EVENT_NAME.OUTPUT_RENDER);
     }
-
-    /** Return reference to the renderer's canvas element. */
-    public getView(): any { }
     
 
     /** Function call for initialize Entities use by Output for render. */

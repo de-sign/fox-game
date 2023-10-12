@@ -1,5 +1,7 @@
 // Imports
-import { Engine } from '.';
+import { TObject, TFlag } from '../Core/Type';
+import { Engine } from './Engine';
+
 
 
 /**
@@ -24,9 +26,9 @@ export class Store {
     
 
     /** Data saved by the manager. **/
-    private _oData: { [sKey: string]: any } = {};
+    private _oData: TObject = {};
     /** Key stored in LocalStorage when they are set. */
-    private _oStorableKeys: { [sKey: string]: boolean } = {};
+    private _oStorableKeys: TFlag = {};
     
     
     /** Constructor */

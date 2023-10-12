@@ -1,3 +1,6 @@
+// Type 
+export * from './Type';
+
 // Constants
 export * from './Constants';
 

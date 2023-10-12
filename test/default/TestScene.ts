@@ -10,8 +10,8 @@ export class MyScene extends FOX.ScenePixiJS {
     private _oDirection: { [key: string]: number } | null;
 
 
-    constructor (oEngine: FOX.Engine) {
-        super(oEngine);
+    constructor (oMScene: FOX.SceneManager) {
+        super(oMScene);
     }
 
     
@@ -33,9 +33,6 @@ export class MyScene extends FOX.ScenePixiJS {
         this._oCube.drawRect(0, 0, 200, 200);
         this.oRenderContainer.addChild(this._oCube);
 
-        this._oCube.pivot.set(100, 100);
-        this._oCube.position.set(400, 300);
-
     }
 
     public update(): void {
@@ -45,17 +42,17 @@ export class MyScene extends FOX.ScenePixiJS {
             nY: 0
         };
 
-        if( this._oControllerSet.isPressed('Up') ){
-            oDirection.nY -= oCtrl ? oCtrl.getButton('Up').nValue : 0;
+        if( this._oControllerSet.isPressed('GameUp') ){
+            oDirection.nY -= oCtrl ? oCtrl.getButton('GameUp').nValue : 0;
         }
-        if( this._oControllerSet.isPressed('Down') ){
-            oDirection.nY += oCtrl ? oCtrl.getButton('Down').nValue : 0;
+        if( this._oControllerSet.isPressed('GameDown') ){
+            oDirection.nY += oCtrl ? oCtrl.getButton('GameDown').nValue : 0;
         }
-        if( this._oControllerSet.isPressed('Left') ){
-            oDirection.nX -= oCtrl ? oCtrl.getButton('Left').nValue : 0;
+        if( this._oControllerSet.isPressed('GameLeft') ){
+            oDirection.nX -= oCtrl ? oCtrl.getButton('GameLeft').nValue : 0;
         }
-        if( this._oControllerSet.isPressed('Right') ){
-            oDirection.nX += oCtrl ? oCtrl.getButton('Right').nValue : 0;
+        if( this._oControllerSet.isPressed('GameRight') ){
+            oDirection.nX += oCtrl ? oCtrl.getButton('GameRight').nValue : 0;
         }
 
         if( oDirection.nX || oDirection.nY ){

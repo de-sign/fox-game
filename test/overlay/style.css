@@ -1,0 +1,193 @@
+/* ----- Variables */
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500&display=swap');
+@import url('./Assets/variables.css');
+
+
+/* ----- Content */
+* {
+	box-sizing: border-box;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+body {
+    font-family: var(--font-family);
+	font-size: var(--font-size);
+	color: var(--text-color);
+	background-color: var(--text-color);
+
+    height: 100vh;
+    margin: 0;
+}
+
+body.--started {
+	background-color: var(--text-active-color);
+}
+
+canvas {
+    position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+    z-index: -1000;
+}
+
+.DS__Scene {
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+    z-index: 0;
+}
+
+
+/* ----- Game */
+#GameScene {
+	padding: 25px;
+	display: flex;
+	justify-content: flex-end;
+    align-items: flex-start;
+}
+
+
+/* ----- Pause */
+#PauseScene {
+    display: flex;
+    z-index: 1000;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+	background-color: rgba(255, 255, 255, 0.75);
+}
+
+
+/* ----- Logo */
+.DS__Logo {
+	font-weight: 900;
+	font-size: 6em;
+	display: block;
+	filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3) );
+}
+
+.DS__Logo_Small {
+	font-size: 0.5em;
+	line-height: 0em;
+	margin: 0 0 -0.5em 1.3em;
+}
+
+
+/* ----- Menu */
+.DS__Menu {
+	--menu-color: var(--color-dark-grey);
+	--menu-border-color: var(--color-black);
+	
+	--form-color: var(--theme-color);
+	--form-border-color: var(--color-black);
+	
+	padding: 0;
+	max-width: 100%;
+	margin: var(--menu-margin);
+	width: var(--menu-width);
+	text-align: var(--menu-text);
+}
+
+.DS__Menu ul {
+	padding: 0;
+	margin: 0;
+}
+
+.DS__Menu ul + ul {
+	margin-top: 1.5em;
+}
+
+.DS__Button,
+.DS__Menu li {
+	--menu-border-right-width: calc( var(--menu-border-width) + 25px );
+	--menu-border-right-position: /*calc( -1 * var(--menu-border-right-width) );*/ -125px;
+	--menu-border-left-width: calc( 100% - var(--menu-border-width) + 25px );
+	--menu-border-left-position: calc( -1 * var(--menu-border-left-width) );
+	
+	display: block;
+	border-radius: 25px;
+	padding: 10px 65px;
+	margin: 10px 0;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	
+	box-shadow: 0 0 0 0 transparent;
+	background-color: transparent;
+	/*transition: all 0.25s ease;*/
+}
+
+.DS__Button::before,
+.DS__Button::after,
+.DS__Menu li::before,
+.DS__Menu li::after {
+	content: '';
+	position: absolute;
+	display: block;
+	top: 0;
+	bottom: 0;
+	
+	opacity: 0;
+	transform: skew(-25deg);
+	transform-origin: 0 100%;
+}
+
+.DS__Button::before,
+.DS__Menu li::before {
+	width: var(--menu-border-left-width);
+	background-color: var(--menu-color);
+	z-index: -100;
+	
+	left: var(--menu-border-left-position);
+	transition: all 0.5s ease;
+}
+
+.DS__Button::after,
+.DS__Menu li::after {
+	width: var(--menu-border-right-width);
+	background-color: var(--menu-border-color);
+	z-index: 0;
+	
+	right: var(--menu-border-right-position);
+	transition: none;
+}
+
+.DS__Button:hover,
+.DS__Button.--actived,
+.DS__Menu .Menu_Cursor {
+	background-color: var(--menu-color) !important;
+	color: var(--text-active-color) !important;
+	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.DS__Button:hover::before,
+.DS__Button.--actived::before,
+.DS__Menu .Menu_Cursor::before {
+	left: -25px !important;
+	opacity: 1;
+}
+
+.DS__Button:hover::after,
+.DS__Button.--actived::after,
+.DS__Menu .Menu_Cursor::after {
+	right: -25px !important;
+	opacity: 1;
+	transition: right 0.5s ease;
+}
+
+
+/* ----- Button */
+.DS__Button {
+	--menu-color: var(--color-dark-grey);
+	--menu-border-color: var(--color-black);
+	
+	--form-color: var(--theme-color);
+	--form-border-color: var(--color-black);
+
+	box-shadow: 0 0 0 2px var(--menu-color) inset;
+}

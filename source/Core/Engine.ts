@@ -2,6 +2,7 @@
 import EventEmitter from 'eventemitter3';
 import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
 
+import { TListeners } from './Type';
 import { EVENT_NAME } from './Constants';
 import { Store, IStoreOptions } from './Store';
 import { InputManager, IInputOptions } from '../Input';
@@ -57,7 +58,7 @@ export class Engine extends EventEmitter {
     /** Engine Options */
     private _oOptions: Partial<IEngineOptions>;
     /** List of Listener add via window. */
-    private _oWindowListeners: { [sKey: string]: Function } = {};
+    private _oWindowListeners: TListeners = {};
     /** Count of frames rendered. */
     private _nFrames: number = 0;
     

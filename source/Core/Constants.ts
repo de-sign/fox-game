@@ -23,8 +23,8 @@ export enum EVENT_NAME {
     SCENE_INITIALIZE = 'SceneInitialize',
     SCENE_DESTROY = 'SceneDestroy',
     SCENE_CHANGE = 'SceneChange',
-    // SCENE_BLUR = 'SceneBlur',
-    // SCENE_FOCUS = 'SceneFocus',
+    SCENE_BLUR = 'SceneBlur',
+    SCENE_FOCUS = 'SceneFocus',
 
     OUTPUT_RENDER = 'OuputRender',
     OUTPUT_RESIZE = 'OuputResize',

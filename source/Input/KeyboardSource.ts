@@ -1,10 +1,11 @@
 // Imports
+import { TData, TValue } from '../Core/Type';
 import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Core/Constants';
 import { InputManager, InputSource } from './';
 
 
 // Liste des valeurs par type d'EVENT
-const oTypeMap: { [sKey: string]: number } = {
+const oTypeMap: TValue = {
     keydown: 1.0,
     keypress: 1.0, // DEPRECATED ! - not recommended
     keyup: 0.0
@@ -18,9 +19,9 @@ const oTypeMap: { [sKey: string]: number } = {
 export class KeyboardSource extends InputSource {
 
     /** List of Button states change catch during a tick. */
-    private _oButtonsChange: { [sKey: string]: number } = {};
+    private _oButtonsChange: TValue = {};
     /** List of Button name define by KeyboardAPI. */
-    protected _oButtonsName: { [sKey: string]: string } = {};
+    protected _oButtonsName: TData = {};
 
     /** Flag for update name with KeyboardEvent if Keyboard API not supported.*/
     private _bUpdateButtonsName: boolean = false;

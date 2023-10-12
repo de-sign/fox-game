@@ -1,0 +1,108 @@
+:root {
+	
+	/* --- Font */
+	--font-family: 'Red Hat Display', sans-serif;
+	--font-size: 20px;
+	
+	/* --- Color */
+	--color-black: #000;
+	--color-dark-grey: #333;
+	--color-grey: #8a8b90;
+	--color-white: #fff;
+	
+	--color-light-green: #b5eb36;
+	--color-green: #05b86d;
+    --color-dark-green: #9bd600;
+	
+	--color-light-blue: #43a7ff;
+	--color-blue: #004fe8;
+    --color-dark-blue: #0e93f2;
+	
+	--color-light-violet: #b5a9ff;
+	--color-violet: #6751fc;
+    --color-dark-violet: #a595ff;
+	
+	--color-light-red: #e3313d;
+	--color-red: #f33c50;
+    --color-dark-red: #c42833;
+	
+	--color-light-orange: #fa7248;
+	--color-orange: #f0501e;
+    --color-dark-orange: #f4523b;
+	
+	--color-light-yellow: #f2b71f;
+	--color-yellow: #e4700b;
+    --color-dark-yellow: #e7a300;
+	
+	/* ----- Theme - Default Red */
+	--theme-light-color: var(--color-light-red);
+	--theme-color: var(--color-red);
+	--theme-dark-color: var(--color-dark-red);
+	
+	--text-color: var(--color-black);
+	--text-active-color: var(--color-white);
+	--text-inactive-color: var(--color-grey);
+	
+	--scroll-thumb-color: var(--color-black);
+	--scroll-track-color: var(--color-grey);
+	
+	
+	/* ----- Default */
+	--title-text: left;
+	
+	--menu-border-width: 50px;
+	
+	--menu-width: 100%;
+	--menu-margin: 0 auto;
+	--menu-text: left;
+	
+	--navbar-text: flex-start;
+}
+
+/* ----- Align */
+.--align-center {
+	--title-text: center;
+	
+	--menu-width: 300px;
+	--menu-margin: 0 auto;
+	--menu-text: center;
+	
+	--navbar-text: center;
+}
+
+/* ----- Theme */
+.--theme-blue {
+	--theme-light-color: var(--color-light-blue);
+	--theme-color: var(--color-blue);
+	--theme-dark-color: var(--color-dark-blue);
+}
+
+.--theme-violet {
+	--theme-light-color: var(--color-light-violet);
+	--theme-color: var(--color-violet);
+	--theme-dark-color: var(--color-dark-violet);
+}
+
+.--theme-red {
+	--theme-light-color: var(--color-light-red);
+	--theme-color: var(--color-red);
+	--theme-dark-color: var(--color-dark-red);
+}
+
+.--theme-orange {
+	--theme-light-color: var(--color-light-orange);
+	--theme-color: var(--color-orange);
+	--theme-dark-color: var(--color-dark-orange);
+}
+
+.--theme-yellow {
+	--theme-light-color: var(--color-light-yellow);
+	--theme-color: var(--color-yellow);
+	--theme-dark-color: var(--color-dark-yellow);
+}
+
+.--theme-green {
+	--theme-light-color: var(--color-light-green);
+	--theme-color: var(--color-green);
+	--theme-dark-color: var(--color-dark-green);
+}

@@ -26,6 +26,13 @@ const oDefaultOutputPixiJSOptions = {
  */
 export class OutputPixiJS extends OutputManager {
 
+    
+    /** Return reference to the renderer's canvas element. */
+    public get view(): PIXI.ICanvas {
+        return this._oRenderer.view;
+    }
+
+
     /** Output option */
     declare _oOptions: IOutputPixiJSOptions;
 
@@ -67,11 +74,6 @@ export class OutputPixiJS extends OutputManager {
         }
         
         super.render();
-    }
-
-    /** Return reference to the renderer's canvas element. */
-    public getView(): PIXI.ICanvas {
-        return this._oRenderer.view;
     }
 
 

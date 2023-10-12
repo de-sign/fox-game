@@ -1,6 +1,7 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
+import { TObject } from '../Core/Type';
 import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Core/Constants';
 import { Engine } from '../Core';
 import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from '.';
@@ -46,7 +47,7 @@ export class InputManager extends EventEmitter {
     /** Last tick time of one source update. */
     public nUpdate: Number = 0;
     /** List of multiple input created by manager. */
-    public oSources: { [sKey: string]: InputSource | null} = {};
+    public oSources: TObject<InputSource | null> = {};
     /** List of controllers */
     public aControllers: InputController[] = [];
 

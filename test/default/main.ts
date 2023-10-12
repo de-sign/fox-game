@@ -6,35 +6,27 @@ window.addEventListener('load', () => {
         bDebugMode: true,
 
         // Scene
-        cStartingScene: MyScene,
+        oScene: {
+            cStartingScene: MyScene,
+        },
         
         // Input
         oInput: {
             oControllersOptions: {
                 [FOX.INPUT_SOURCE_TYPE.KEYBOARD]: {
                     oMapping: {
-                        KeyW: 'Up',
-                        KeyS: 'Down',
-                        KeyA: 'Left',
-                        KeyD: 'Right',
-
-                        ArrowUp: 'Up',
-                        ArrowDown: 'Down',
-                        ArrowLeft: 'Left',
-                        ArrowRight: 'Right'
+                        GameUp: ['KeyW', 'ArrowUp'],
+                        GameDown: ['KeyS', 'ArrowDown'],
+                        GameLeft: ['KeyA', 'ArrowLeft'],
+                        GameRight: ['KeyD', 'ArrowRight']
                     }
                 },
                 [FOX.INPUT_SOURCE_TYPE.GAMEPAD]: {
                     oMapping: {
-                        Axe1Minus: 'Up',
-                        Axe1Plus: 'Down',
-                        Axe0Minus: 'Left',
-                        Axe0Plus: 'Right',
-                        
-                        Button12: 'Up',
-                        Button13: 'Down',
-                        Button14: 'Left',
-                        Button15: 'Right'
+                        GameUp: ['Axe1Minus', 'Button12'],
+                        GameDown: ['Axe1Plus', 'Button13'],
+                        GameLeft: ['Axe0Minus', 'Button14'],
+                        GameRight: ['Axe0Plus', 'Button15']
                     }
                 }
             }
@@ -45,7 +37,6 @@ window.addEventListener('load', () => {
         oOutput: <FOX.IOutputPixiJSOptions>{
 
             hResizeViewTo: <Window>window,
-            bKeepAspectRatio: true,
             bAutoApplyScale: true,
 
             // PIXI Options
@@ -61,9 +52,7 @@ window.addEventListener('load', () => {
         } );
     } );
 
-    FOX.HTML.oBody.onceEvent('click', () => {
-        FOX.HTML.oBody.setStyle('background-color', '#00F');
-    });
-
     oGame.start();
+
+    window['oGame'] = oGame;
 } );

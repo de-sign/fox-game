@@ -1,9 +1,13 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
+import { TObject } from '../Core/Type';
 import { HTML } from '../Core/HTML';
 import { EVENT_NAME, MENU_CURSOR_VERTICAL } from '../Core/Constants';
 import { InputController, InputControllerSet } from '../Input';
+
+
+type ControllerActions = TObject<keyof Menu | Function>;
 
 /**
  * Menu options supplied to constructor.
@@ -15,7 +19,7 @@ export interface IMenuOptions {
 
     bMouseMoveCursor?: boolean,
     oController?: InputControllerSet | InputController,
-    oControllerActions?: { [sKey: string]: keyof Menu | Function },
+    oControllerActions?: ControllerActions,
     nHoldDelay?: number,
 
     bInfinite?: boolean
@@ -51,7 +55,7 @@ export class Menu extends EventEmitter {
 
     private _bLockUpdate: boolean = false;
     private _oController: InputControllerSet | InputController | null = null;
-    private _oControllerActions: { [sKey: string]: Function } | null = null;
+    private _oControllerActions: TObject<Function> | null = null;
     private _nHoldSimulatedPress: number = 0;
     private _sHoldButton: string | null = null;
 
@@ -89,7 +93,7 @@ export class Menu extends EventEmitter {
         } );
 
         if( this._oOptions.oController ){
-            this.setController(this._oOptions.oController, <{ [sKey: string]: keyof Menu | Function }>this._oOptions.oControllerActions);
+            this.setController(this._oOptions.oController, <ControllerActions>this._oOptions.oControllerActions);
         }
     }
 
@@ -171,9 +175,9 @@ export class Menu extends EventEmitter {
     }
 
 
-    public setController(oController: InputController | InputControllerSet, oControllerActions: { [sKey: string]: keyof Menu | Function }): this {
+    public setController(oController: InputController | InputControllerSet, oControllerActions: ControllerActions): this {
         
-        const oActions: { [sKey: string]: Function } = {};
+        const oActions: TObject<Function> = {};
 
         for( let sButton in oControllerActions ){
             const uAction = oControllerActions[sButton];

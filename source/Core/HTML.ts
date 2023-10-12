@@ -1,6 +1,8 @@
 // Import
 import EventEmitter from 'eventemitter3';
 
+import { TObject, TListeners, TData, TEmptyData, TFlag } from '../Core/Type';
+
 const rData = /data-/;
 
 export class HTML extends EventEmitter {
@@ -15,7 +17,7 @@ export class HTML extends EventEmitter {
     }
 
 
-    private _oListeners: {[sKey: string]: Function} = {};
+    private _oListeners: TListeners = {};
     
     public hElement: HTMLElement;
     public oComputedStyle: CSSStyleDeclaration;
@@ -120,7 +122,7 @@ export class HTML extends EventEmitter {
 
 
     // Attribute
-    public set oAttribute(oAttribute: { [sKey: string]: string }) {
+    public set oAttribute(oAttribute: TData) {
         this.hElement.getAttributeNames().forEach( sName => {
             if( !oAttribute[sName] ){
                 this.hElement.removeAttribute(sName);
@@ -132,8 +134,8 @@ export class HTML extends EventEmitter {
         }
     }
 
-    public get oAttribute(): { [sKey: string]: string } {
-        const oAttribute: { [sKey: string]: string } = {};
+    public get oAttribute(): TData {
+        const oAttribute: TData = {};
 
         this.hElement.getAttributeNames().forEach( sName => {
             oAttribute[sName] = <string>this.hElement.getAttribute(sName);
@@ -157,7 +159,7 @@ export class HTML extends EventEmitter {
         return this;
     }
 
-    public setAttributes(oAttribute: { [sKey: string]: string | null }): this {
+    public setAttributes(oAttribute: TEmptyData): this {
         for( let sName in oAttribute ){
             const sValue = oAttribute[sName];
             if( sValue == null ){
@@ -179,7 +181,7 @@ export class HTML extends EventEmitter {
 
 
     // Data
-    public set oData(oData: { [sKey: string]: string }) {
+    public set oData(oData: TData) {
         this.hElement.getAttributeNames().forEach( sName => {
             if( sName.match(rData) && !oData[ sName.replace(rData, '') ]){
                 this.hElement.removeAttribute(sName);
@@ -191,8 +193,8 @@ export class HTML extends EventEmitter {
         }
     }
 
-    public get oData(): { [sKey: string]: string } {
-        const oDatas: { [sKey: string]: string } = {};
+    public get oData(): TData {
+        const oDatas: TData = {};
 
         this.hElement.getAttributeNames().forEach( sName => {
             if( sName.match(rData) ){
@@ -212,7 +214,7 @@ export class HTML extends EventEmitter {
         return this.removeAttribute(`data-${sName}`);
     }
 
-    public setDatas(oData: { [sKey: string]: string | null }) {
+    public setDatas(oData: TEmptyData) {
         for( let sName in oData ){
             const sValue = oData[sName];
             if( sValue == null ){
@@ -291,7 +293,7 @@ export class HTML extends EventEmitter {
         return this.hElement.classList.toggle(sClass, bForce);
     }
 
-    public setClass( oClass: { [sKey: string]: boolean } ): this {
+    public setClass( oClass: TFlag ): this {
         const oClassList = this.hElement.classList;
         for( let sClass in oClass ){
             const bHas = oClassList.contains(sClass);
@@ -323,7 +325,7 @@ export class HTML extends EventEmitter {
     }
 
 
-    public set oStyle( oStyle: { [sKey: string]: string } ) {
+    public set oStyle( oStyle: TData ) {
         const oRawStyle = this.hElement.style;
 
         for( let nIndex = 0; nIndex < oRawStyle.length; nIndex++ ){
@@ -338,8 +340,8 @@ export class HTML extends EventEmitter {
         }
     }
 
-    public get oStyle(): { [sKey: string]: string | null } {
-        const oStyle: { [sKey: string]: string | null } = {},
+    public get oStyle(): TEmptyData {
+        const oStyle: TEmptyData = {},
             oRawStyle = this.hElement.style;
 
         for( let nIndex = 0; nIndex < oRawStyle.length; nIndex++ ){
@@ -361,7 +363,7 @@ export class HTML extends EventEmitter {
         return this;
     }
 
-    public setStyles( oStyle: { [sKey: string]: string | null } ): this {
+    public setStyles( oStyle: TEmptyData ): this {
         for( let sKey in oStyle ){
             if( oStyle[sKey] ){
                 this.hElement.style.setProperty(sKey, oStyle[sKey]);

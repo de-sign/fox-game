@@ -26,11 +26,15 @@ export class SceneManager extends EventEmitter {
     public oEngine: Engine;
 
     /** Current Scene updated and rendered */
-    public oScene: Scene | null = null;
+    public get oScene(): Scene | null {
+        return this._aScenes[ this._aScenes.length - 1 ];
+    }
 
 
     /** Scene option */
     private _oOptions: ISceneOptions;
+    /** Stack of Scene */
+    private _aScenes: Scene[] = [];
 
 
     constructor(oEngine: Engine, oSceneOptions?: ISceneOptions) {
@@ -59,26 +63,28 @@ export class SceneManager extends EventEmitter {
 
     /** Update Current Scene */
     public update(): void {
-        if( this.oScene ){
-            this.oScene.update();
+        const oScene = this.oScene;
+        if( oScene ){
+            oScene.update();
 
             // Trigger
-            this.emit(EVENT_NAME.SCENE_UPDATE, this.oScene);
+            this.emit(EVENT_NAME.SCENE_UPDATE, oScene);
         }
     }
 
     /** Render Current Scene */
     public render(): void {
-        if( this.oScene ){
-            this.oScene.render();
+        const oScene = this.oScene;
+        if( oScene ){
+            oScene.render();
 
             // Trigger
-            this.emit(EVENT_NAME.SCENE_RENDER, this.oScene);
+            this.emit(EVENT_NAME.SCENE_RENDER, oScene);
         }
     }
     
 
-    /** Change Current Scene */
+    /** Change Current Scene with a new Scene */
     public changeScene(oNewScene: new (oMScene: SceneManager) => Scene, ...aArguments: []): void {
         this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
             // Enlève et détruit la scène courante
@@ -88,20 +94,48 @@ export class SceneManager extends EventEmitter {
             this._setScene(oNewScene, aArguments);
 
             // Trigger
-            this.emit(EVENT_NAME.SCENE_CHANGE);
+            this.emit(EVENT_NAME.SCENE_CHANGE, this.oScene);
         } );
     }
 
+    /**
+     * Add a new Scene like Current and stock last Scene.
+     * Used for create Overlay Scene like pause, menu etc ...
+     */
+    public stackScene(oNewScene: new (oMScene: SceneManager) => Scene, ...aArguments: []): void {
+        this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
+            // Trigger
+            this.oScene?.emit(EVENT_NAME.SCENE_BLUR);
+
+            // Ajoute la nouvelle scène et la défini comme courante
+            this._setScene(oNewScene, aArguments);
+        } );
+    }
+
+    /**
+     * Destroy current Scene and define last stcoke Scene like Current.
+     * Used for Destroy Overlay Scene like pause, menu etc ...
+     */
+    public unstackScene(nSceneToUnstack: number = 1): void {
+        this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
+            for( let nIndex = 0; nIndex < nSceneToUnstack; nIndex++ ){
+                // Enlève et détruit la scène courante
+                this._unsetScene();
+                
+                // Trigger
+                this.oScene?.emit(EVENT_NAME.SCENE_FOCUS);
+            }
+        } );
+    }
 
 
     /** Remove and destroy current Scene. */
     private _unsetScene(): void {
 
         // Enlève et détruit la scène courante
-        const oScene = this.oScene;
+        const oScene = this._aScenes.pop();
         if( oScene ){
             oScene.destroy();
-            this.oScene = null;
 
             // Trigger
             this.emit(EVENT_NAME.SCENE_DESTROY, oScene);
@@ -111,11 +145,12 @@ export class SceneManager extends EventEmitter {
     /** Add New Scene like current. */
     private _setScene(oNewScene: new (oMScene: SceneManager) => Scene, aArguments: []): void {
             
-        // Ajoute la nouvelle scène et la défini comme courante
-        this.oScene = new oNewScene(this);
-        this.oScene.initialize.apply(this.oScene, aArguments);
+        // Créer la nouvelle scène, l'ajoute et la défini comme courante
+        const oScene = new oNewScene(this);
+        oScene.initialize.apply(oScene, aArguments);
+        this._aScenes.push(oScene);
 
         // Trigger
-        this.emit(EVENT_NAME.SCENE_INITIALIZE, this.oScene);
+        this.emit(EVENT_NAME.SCENE_INITIALIZE, oScene);
     }
 }

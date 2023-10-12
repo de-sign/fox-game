@@ -1,6 +1,7 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
+import { TObject, TDataList, TValue } from '../Core/Type';
 import { EVENT_NAME, GAMEPAD_BUTTON_DEAD_ZONE } from '../Core/Constants';
 import { Engine, Store } from '../Core';
 import { InputManager, InputSource } from '.';
@@ -40,10 +41,15 @@ const oDefaultDeadZoneOptions: IControllerDeadZoneOptions = {
  * Controller options supplied to constructor.
  */
 export interface IControllerOptions {
-    oMapping: { [sKey: string]: string },
     bAutoStore?: boolean,
+    oMapping: TDataList,
     oDeadZone?: Partial<IControllerDeadZoneOptions>
 }
+
+const oDefaultControllerOptions = {
+    bAutoStore: true,
+    oMapping: {}
+};
 
 
 /**
@@ -53,7 +59,7 @@ export class InputController extends EventEmitter {
 
 
     /** Static values for index. */
-    private static _oIndex: { [sKey: string]: number } = {};
+    private static _oIndex: TValue = {};
 
     /** Static function for return index. */
     private static _getIndex(sName: string): number {
@@ -78,12 +84,13 @@ export class InputController extends EventEmitter {
     /** Source watch by the controller. */
     private _oSource: InputSource;
     /** List of Button states. */
-    private _oButtons: { [sKey: string]: IControllerButton } = {};
+    private _oButtons: TObject<IControllerButton> = {};
 
     /** Options Controller. */
     private _oOptions: IControllerOptions;
     /** Mapping options of controller. */
-    private _oMapping: { [sKey: string]: string };
+    private _oButtonsMapping: TDataList;
+    private _oKeysMapping: TDataList;
     /** Deadzone options of controller. */
     private _oDeadZone: IControllerDeadZoneOptions;
 
@@ -107,13 +114,10 @@ export class InputController extends EventEmitter {
         this._nIndex = InputController._getIndex( this._oSource.sKey );
 
         // Options
-        this._oOptions = Object.assign( {
-            bAutoStore: true,
-            _oMapping: null,
-            _oDeadZone: null
-        }, oOptions );
+        this._oOptions = Object.assign( {}, oDefaultControllerOptions, oOptions );
 
-        this._oMapping = Object.assign( {}, oOptions.oMapping );
+        this._oButtonsMapping = Object.assign( {}, oOptions.oMapping );
+        this._oKeysMapping = this._parseMapping(this._oButtonsMapping);
         this._oDeadZone = Object.assign( {}, oDefaultDeadZoneOptions, oOptions.oDeadZone );
 
         // Gestion du Store
@@ -193,14 +197,15 @@ export class InputController extends EventEmitter {
 
 
     /** Set Mapping and Store. */
-    public setMapping(oMapping: { [sKey: string]: string }): void {
-        this._oMapping = oMapping;
+    public setMapping(oMapping: TDataList): void {
+        this._oButtonsMapping = oMapping;
+        this._oKeysMapping = this._parseMapping(oMapping);
         this._store();
     }
 
     /** Get Mapping. */
-    public getMapping(): { [sKey: string]: string } {
-        return this._oMapping;
+    public getMapping(): TDataList {
+        return this._oButtonsMapping;
     }
 
     /** Set DeadZone and Store. */
@@ -224,7 +229,7 @@ export class InputController extends EventEmitter {
         aCode.forEach( sCode => {
             // MAJ du Controller Button correspondant
             if( this._setButtonOfSource(sCode) ){
-                aUpdated.push( this._oMapping[sCode] );
+                aUpdated.push( ...this._oKeysMapping[sCode] );
             }
         } );
 
@@ -242,44 +247,65 @@ export class InputController extends EventEmitter {
     private _setButtonOfSource(sCode: string): boolean {
         
         let bUpdated = false;
-        const sName = this._oMapping[sCode];
+        const aName = this._oKeysMapping[sCode];
 
         // Vérification de Mapping existant
-        if( sName ){
+        if( aName && aName.length ){
 
-            // Récupération du bouton de la source et du controlleur correspondant
-            const oSourceButton = this._oSource.getButton(sCode),
-                oButton = this.getButton( sName );
+            // Récupération du bouton de la source
+            const oSourceButton = this._oSource.getButton(sCode);
+            aName.forEach( sName => {
 
-            // Si changement de valeur
-            if( oButton.nValue != oSourceButton.nValue ){
+                // Récupération du bouton du controlleur correspondant
+                const oButton = this.getButton( sName );
 
-                // MAJ de la valeur et de la date
-                Object.assign( oButton, {
-                    nValue: oSourceButton.nValue,
-                    nUpdate: this.oEngine.getTickTime()
-                } );
+                // Si changement de valeur
+                if( oButton.nValue != oSourceButton.nValue ){
 
-                // Check if Source Button is pressed with options defined on DeadZone.
-                const sDeadZone = GAMEPAD_BUTTON_DEAD_ZONE[sCode as keyof typeof GAMEPAD_BUTTON_DEAD_ZONE],
-                    nDeadZone = this._oDeadZone[sDeadZone] || 0.0,
-                    bPressed = Math.abs(oSourceButton.nValue) > nDeadZone;
-
-                // Si changement de pression
-                if( oButton.bPressed != bPressed ){
-
-                    // MAJ de la pression et de la date
+                    // MAJ de la valeur et de la date
                     Object.assign( oButton, {
-                        bPressed,
-                        nPressUpdate: this.oEngine.getTickTime()
+                        nValue: oSourceButton.nValue,
+                        nUpdate: this.oEngine.getTickTime()
                     } );
+
+                    // Check if Source Button is pressed with options defined on DeadZone.
+                    const sDeadZone = GAMEPAD_BUTTON_DEAD_ZONE[sCode as keyof typeof GAMEPAD_BUTTON_DEAD_ZONE],
+                        nDeadZone = this._oDeadZone[sDeadZone] || 0.0,
+                        bPressed = Math.abs(oSourceButton.nValue) > nDeadZone;
+
+                    // Si changement de pression
+                    if( oButton.bPressed != bPressed ){
+
+                        // MAJ de la pression et de la date
+                        Object.assign( oButton, {
+                            bPressed,
+                            nPressUpdate: this.oEngine.getTickTime()
+                        } );
+                    }
+        
+                    bUpdated = true;
                 }
-    
-                bUpdated = true;
-            }
+            } );
         }
 
         return bUpdated;
+    }
+
+
+    private _parseMapping(oMapping: TDataList): TDataList {
+        const oParsedMapping: TDataList = {};
+
+        for( let sName in oMapping ){
+            const aCodes = oMapping[sName];
+            aCodes.forEach( sCode => {
+                if( !oParsedMapping[sCode] ){
+                    oParsedMapping[sCode] = [];
+                }
+                oParsedMapping[sCode].push( sName );
+            } );
+        }
+
+        return oParsedMapping;
     }
 
     
@@ -290,7 +316,7 @@ export class InputController extends EventEmitter {
         // Si cle dispo
         if( this._sStoreKey ){
             this.oStore.set(this._sStoreKey, {
-                oMapping: this._oMapping,
+                oMapping: this._oButtonsMapping,
                 oDeadZone: this._oDeadZone
             } );
 
@@ -309,7 +335,8 @@ export class InputController extends EventEmitter {
             const oData = this.oStore.get(this._sStoreKey);
             // Si DATA déjà STORE une fois
             if( oData ){
-                this._oMapping = oData.oMapping;
+                this._oButtonsMapping = oData.oMapping;
+                this._oKeysMapping = this._parseMapping(oData.oMapping);
                 this._oDeadZone = oData.oDeadZone;
                 
                 bRestored = true;
