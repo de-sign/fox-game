@@ -32,7 +32,7 @@ export class GameScene extends FOX.ScenePixiJS {
         this._oCube = PIXI.Sprite.from('character');
         
             // BG
-        this.oRenderContainer.addChild(oSpriteBG, this._oCube);
+        this.oRenderScene.addChild(oSpriteBG, this._oCube);
         this._centerContainer();
 
             // Character
@@ -105,9 +105,9 @@ export class GameScene extends FOX.ScenePixiJS {
 
 
     private _centerContainer(): void {
-        const hView = this.oOutput.view;
-        this.oRenderContainer.pivot.set( this.oRenderContainer.width / 2, this.oRenderContainer.height / 2 );
-        this.oRenderContainer.position.set( hView.width / 2, hView.height / 2 );
+        const oOriginalSize = this.oOutput.oResolution;
+        this.oRenderScene.pivot.set( this.oRenderScene.width / 2, this.oRenderScene.height / 2 );
+        this.oRenderScene.position.set( oOriginalSize.width / 2, oOriginalSize.height / 2 );
     }
 
     private _openMenu(): void {

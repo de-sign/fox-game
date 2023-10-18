@@ -14,7 +14,7 @@ export class ScenePixiJS extends Scene {
      * The root display container that's rendered.
      * @member {PIXI.Container}
      */
-    public oRenderContainer: PIXI.Container = new PIXI.Container();
+    public oRenderScene: PIXI.Container = new PIXI.Container();
 
 
     /** Constructor */
@@ -24,6 +24,6 @@ export class ScenePixiJS extends Scene {
 
     /** Destructor */
     public destroy(): void {
-        this.oRenderContainer.destroy( { children: true } );
+        this.oRenderScene.destroy( { children: true } );
     }
 }

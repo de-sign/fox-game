@@ -9,14 +9,14 @@ import { ScenePixiJS } from '../Scene';
 /**
  * Output options supplied to constructor.
  */
-export interface IOutputPixiJSOptions extends IOutputOptions, PIXI.IRendererOptionsAuto {
-    bAutoApplyScale?: boolean
+export interface IOutputPixiJSOptions extends IOutputOptions {
+    oRenderer: PIXI.IRendererOptionsAuto
 }
 
 const oDefaultOutputPixiJSOptions = {
-    bAutoApplyScale: false,
-
-    forceCanvas: false,
+    oRenderer: {
+        forceCanvas: false
+    }
 };
 
 
@@ -28,8 +28,18 @@ export class OutputPixiJS extends OutputManager {
 
     
     /** Return reference to the renderer's canvas element. */
-    public get view(): PIXI.ICanvas {
+    public get hView(): PIXI.ICanvas {
         return this._oRenderer.view;
+    }
+    /** The root display container that's rendered. */
+    declare oRootScene: PIXI.Container;
+    /** Return size of renderer */
+    public get oSizeView(): PIXI.Rectangle {
+        return this._oRenderer.screen;
+    }
+    /** Scale between Original and Current Size of View applied to viewport. */
+    public get oScaleScene(): PIXI.ObservablePoint {
+        return this.oRootScene.scale;
     }
 
 
@@ -42,20 +52,16 @@ export class OutputPixiJS extends OutputManager {
      */
     declare _oRenderer: PIXI.IRenderer;
 
-    /**
-     * The root display container that's rendered.
-     * @member {PIXI.Container}
-     */
-    private _oRenderContainer: PIXI.Container = new PIXI.Container();
-
 
     /** Constructor */
     constructor(oEngine: Engine, oOutputOptions?: Partial<IOutputPixiJSOptions>) {
 
         super(oEngine, Object.assign( {}, oDefaultOutputPixiJSOptions, oOutputOptions ) );
 
+        // Creation du Root Scene
+        this.oRootScene = new PIXI.Container();
         // Récupération du RENDERER de PixiJS, comme dans PIXI.Application
-        this.setRenderer( PIXI.autoDetectRenderer(<PIXI.IRendererOptionsAuto>this._oOptions) );
+        this._setRenderer( PIXI.autoDetectRenderer(this._oOptions.oRenderer) );
     }
 
     /** Destructor */
@@ -68,9 +74,9 @@ export class OutputPixiJS extends OutputManager {
     /** Render function call each tick. */
     public render(): void {
 
-        // RENDER le conteneur PixiJS de la scène
-        if( this._oRenderContainer ) {
-            this._oRenderer.render(this._oRenderContainer);
+        // RENDER le conteneur PixiJS
+        if( this.oRootScene.children.length ) {
+            this._oRenderer.render(this.oRootScene);
         }
         
         super.render();
@@ -79,25 +85,25 @@ export class OutputPixiJS extends OutputManager {
 
     /** Function call for initialize Entities use by Output for render. */
     public setSceneOutputEntities( oScene: ScenePixiJS ): void {
-        if( oScene.oRenderContainer ){
-            this._oRenderContainer.addChild( oScene.oRenderContainer );
+        if( oScene.oRenderScene ){
+            this.oRootScene.addChild( oScene.oRenderScene );
         }
     }
 
     /** Function call for destroy Entities use by Output for render. */
     public unsetSceneOutputEntities( oScene: ScenePixiJS ): void {
-        if( oScene.oRenderContainer ){
-            this._oRenderContainer.removeChild( oScene.oRenderContainer );
+        if( oScene.oRenderScene ){
+            this.oRootScene.removeChild( oScene.oRenderScene );
         }
     }
 
     /** Resize the Renderer */
     protected _resizeView(nWidth: number, nHeight: number): void {
         this._oRenderer.resize(nWidth, nHeight);
-        
-        // Auto Scale
-        if( this._oOptions.hResizeViewTo && this._oOptions.bAutoApplyScale ){
-            this._oRenderContainer.scale.set(this.nWidthScale, this.nHeightScale);
-        }
+    }
+
+    /** Apply scale to Root Scene */
+    protected _scaleScene(nScaleX: number, nScaleY: number): void {
+        this.oRootScene.scale.set(nScaleX, nScaleY);
     }
 }

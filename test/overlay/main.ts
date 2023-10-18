@@ -13,7 +13,7 @@ window.addEventListener('load', () => {
         
         // Input
         oInput: {
-            bGamepad: false,
+            //bGamepad: false,
             oControllersOptions: {
                 [FOX.INPUT_SOURCE_TYPE.KEYBOARD]: {
                     oMapping: {
@@ -33,6 +33,24 @@ window.addEventListener('load', () => {
                         GameRight: ['KeyD', 'ArrowRight'],
                         GameMenu: ['Backspace', 'Escape', 'Delete', 'NumpadDecimal']
                     }
+                },
+                [FOX.INPUT_SOURCE_TYPE.GAMEPAD]: {
+                    oMapping: {
+
+                        // Menu
+                        MenuUp: ['Axe1Minus', 'Button12'],
+                        MenuDown: ['Axe1Plus', 'Button13'],
+                        MenuLeft: ['Axe0Minus', 'Button14'],
+                        MenuRight: ['Axe0Plus', 'Button15'],
+                        MenuValidate: ['Button0'],
+                        MenuCancel: ['Button1', 'Button3'],
+
+                        GameUp: ['Axe1Minus', 'Button12'],
+                        GameDown: ['Axe1Plus', 'Button13'],
+                        GameLeft: ['Axe0Minus', 'Button14'],
+                        GameRight: ['Axe0Plus', 'Button15'],
+                        GameMenu: ['Button9']
+                    }
                 }
             }
         },
@@ -45,12 +63,15 @@ window.addEventListener('load', () => {
         // Output
         cOutputManager: FOX.OutputPixiJS,
         oOutput: <FOX.IOutputPixiJSOptions>{
-
-            hResizeViewTo: <Window>window,
-
+            nAspectType: FOX.OUTPUT_ASPECT_TYPE.KEEP_RATIO_AND_EXTEND,
+            
             // PIXI Options
-            backgroundColor: '#FFF',
-            antialias: true
+            oRenderer: {
+                antialias: true,
+                autoDensity: true,
+                backgroundColor: '#FFF',
+                forceCanvas: false,
+            }
         }
     } );
     window['oGame'] = oGame;

@@ -122,7 +122,17 @@ export enum GAMEPAD_BUTTON_XBOX_NAME {
 }
 
 
-/** ----- INPUT_SOURCE */
+/** ----- OUTPUT_ASPECT */
+export enum OUTPUT_ASPECT_TYPE {
+    INITIAL,
+    KEEP_RATIO,
+    KEEP_RATIO_AND_EXTEND,
+    EXTEND,
+    STRETCH
+}
+
+
+/** ----- MENU_CURSOR */
 export enum MENU_CURSOR_VERTICAL {
     MenuUp = 'previous',
     MenuDown = 'next',
