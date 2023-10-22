@@ -87,10 +87,10 @@ export class Engine extends EventEmitter {
         // Event
         this.oScene
             .on(EVENT_NAME.SCENE_INITIALIZE, oScene => {
-                this.oOutput.setSceneOutputEntities( oScene );
+                this.oOutput.linkToScene( oScene );
             } )
             .on(EVENT_NAME.SCENE_DESTROY, oScene => {
-                this.oOutput.unsetSceneOutputEntities( oScene );
+                this.oOutput.unlinkToScene( oScene );
             } );
 
         // Ticker

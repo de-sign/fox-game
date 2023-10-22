@@ -36,11 +36,12 @@ window.addEventListener('load', () => {
         cOutputManager: FOX.OutputPixiJS,
         oOutput: <FOX.IOutputPixiJSOptions>{
 
-            hResizeViewTo: <Window>window,
-            bAutoApplyScale: true,
+            nAspectType: FOX.OUTPUT_ASPECT_TYPE.EXTEND,
 
             // PIXI Options
-            backgroundColor: '#FFFF99'
+            oRenderer: {
+                backgroundColor: '#FFFF99'
+            }
         }
     } )
 

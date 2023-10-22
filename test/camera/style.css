@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500&display=swap');
+
+/* ----- Content */
+* {
+	box-sizing: border-box;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+body {
+    font-family: 'Red Hat Display', sans-serif;
+	font-size: 20px;
+	color: #333;
+	background-color: #EEE;
+
+    height: 100vh;
+    margin: 0;
+}
+
+canvas {
+    position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+    z-index: -1000;
+}
+
+.DS__Scene {
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+    z-index: 0;
+}

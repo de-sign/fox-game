@@ -60,6 +60,8 @@ export class OutputManager extends EventEmitter {
         return null;
     }
     /** Return original size of renderer. */
+    public readonly oInitialResolution: PIXI.Rectangle;
+    /** Return calculated size of renderer. */
     public readonly oResolution: PIXI.Rectangle;
     /** Scale between Original and Current Size of View applied to viewport. */
     public get oScaleScene(): any {
@@ -84,6 +86,7 @@ export class OutputManager extends EventEmitter {
 
         // Original size
         this._nAspectType = <number>this._oOptions.nAspectType;
+        this.oInitialResolution = new PIXI.Rectangle(0, 0, this._oOptions.nWidth, this._oOptions.nHeight);
         this.oResolution = new PIXI.Rectangle(0, 0, this._oOptions.nWidth, this._oOptions.nHeight);
 
         // Ecouteurs pour RESIZE
@@ -109,17 +112,17 @@ export class OutputManager extends EventEmitter {
     }
     
 
-    /** Function call for initialize Entities use by Output for render. */
-    public setSceneOutputEntities( oScene: Scene ): void {
+    /** Function call for initialize Entities used by Output for render. */
+    public linkToScene( oScene: Scene ): void {
         if( this.oEngine.isDebugMode() ){
-            console.log('OutputManager.setSceneOutputEntities', this, oScene);
+            console.log('OutputManager.linkToScene', this, oScene);
         }
     }
 
-    /** Function call for destroy Entities use by Output for render. */
-    public unsetSceneOutputEntities( oScene: Scene ): void {
+    /** Function call for destroy Entities used by Output for render. */
+    public unlinkToScene( oScene: Scene ): void {
         if( this.oEngine.isDebugMode() ){
-            console.log('OutputManager.unsetSceneOutputEntities', this, oScene);
+            console.log('OutputManager.unlinkToScene', this, oScene);
         }
     }
 
@@ -137,14 +140,19 @@ export class OutputManager extends EventEmitter {
 
         let nResizeWidth: number,
             nResizeHeight: number,
-            nScaleX: number,
-            nScaleY: number;
+            nScaleX: number = 1,
+            nScaleY: number = 1,
+            nResolutionWidth: number,
+            nResolutionHeight: number;
 
         const fResize = () => {
             // Redimensionnement de la VIEW
             this._resizeView(nResizeWidth, nResizeHeight);
             // SCALE de la VIEW
             this._scaleScene(nScaleX, nScaleY);
+            // Modification de la résolution affiché
+            this.oResolution.width = nResolutionWidth;
+            this.oResolution.height = nResolutionHeight;
             // Trigger
             this.emit(EVENT_NAME.OUTPUT_RESIZE, this);
         };
@@ -153,10 +161,13 @@ export class OutputManager extends EventEmitter {
         // Si aucun type d'aspect particulier
         if( this._nAspectType == OUTPUT_ASPECT_TYPE.INITIAL ) {
             // Redimensionnement aux dimensions transmises
-            nResizeWidth = this.oResolution.width;
-            nResizeHeight = this.oResolution.height;
+            nResizeWidth = this.oInitialResolution.width;
+            nResizeHeight = this.oInitialResolution.height;
             // SCALE de base
             nScaleX = nScaleY = 1;
+            // Resolution aux dimensions transmises
+            nResolutionWidth = this.oInitialResolution.width;
+            nResolutionHeight = this.oInitialResolution.height;
         }
         // Sinon gestion des aspects particuliés
         else {
@@ -177,21 +188,22 @@ export class OutputManager extends EventEmitter {
             }
 
             // Calcul des SCALE
-            const nScaleWidth = nTargetWidth / this.oResolution.width,
-                nScaleHeight = nTargetHeight / this.oResolution.height,
+            const nScaleWidth = nTargetWidth / this.oInitialResolution.width,
+                nScaleHeight = nTargetHeight / this.oInitialResolution.height,
                 nMinScale = Math.min(nScaleWidth, nScaleHeight);
 
 
             // Redimensionnement en fonction de l'aspect choisi
             if( this._nAspectType == OUTPUT_ASPECT_TYPE.KEEP_RATIO ) {
                 // Redimensionnement en gardant le ratio d'aspect
-                nResizeWidth = Math.floor(this.oResolution.width * nMinScale);
-                nResizeHeight = Math.floor(this.oResolution.height * nMinScale);
+                nResizeWidth = Math.floor(this.oInitialResolution.width * nMinScale);
+                nResizeHeight = Math.floor(this.oInitialResolution.height * nMinScale);
             } else {
                 // Redimensionnement aux dimensions de la cible
                 nResizeWidth = nTargetWidth;
                 nResizeHeight = nTargetHeight;
             }
+
 
             // MAJ des SCALE en fonction de l'aspect choisi
             switch( this._nAspectType ){
@@ -212,6 +224,30 @@ export class OutputManager extends EventEmitter {
                     nScaleY = nScaleHeight;
                     break;
             }
+
+
+            // MAJ de la Resolution en fonction de l'aspect choisi
+            switch( this._nAspectType ){
+                // Résolution aux dimensions transmises
+                case OUTPUT_ASPECT_TYPE.KEEP_RATIO :
+                case OUTPUT_ASPECT_TYPE.STRETCH :
+                    nResolutionWidth = this.oInitialResolution.width;
+                    nResolutionHeight = this.oInitialResolution.height;
+                    break;
+
+                // Resolution en fonction du SCALE et de la VIEW
+                case OUTPUT_ASPECT_TYPE.KEEP_RATIO_AND_EXTEND :
+                    nResolutionWidth = Math.floor(nTargetWidth / nScaleX);
+                    nResolutionHeight = Math.floor(nTargetHeight / nScaleY);
+                    break;
+
+                // Resolution aux dimensions de la VIEW
+                case OUTPUT_ASPECT_TYPE.EXTEND :
+                    nResolutionWidth = nTargetWidth;
+                    nResolutionHeight = nTargetHeight;
+                    break;
+            }
+
         }
 
         if( bInstantly ){
@@ -234,10 +270,8 @@ export class OutputManager extends EventEmitter {
                 this._oOptions.hAppendViewTo.append( this.hView );
             }
             
-            // Mise en echelle si type d'aspect particulié
-            if( this._nAspectType != OUTPUT_ASPECT_TYPE.INITIAL ){
-                this.resize(true);
-            }
+            // Mise en echelle
+            this.resize(true);
         } );
     }
     

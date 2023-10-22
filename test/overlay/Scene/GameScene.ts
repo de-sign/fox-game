@@ -32,8 +32,7 @@ export class GameScene extends FOX.ScenePixiJS {
         this._oCube = PIXI.Sprite.from('character');
         
             // BG
-        this.oRenderScene.addChild(oSpriteBG, this._oCube);
-        this._centerContainer();
+        this.oWorld.addChild(oSpriteBG, this._oCube);
 
             // Character
         this._oCube.anchor.set(0.5);
@@ -56,8 +55,7 @@ export class GameScene extends FOX.ScenePixiJS {
                 if( this._oHMenuButton ){
                     this._oHMenuButton.bHidden = false;
                 }
-            } )
-            .oOutput.on(FOX.EVENT_NAME.OUTPUT_RESIZE, () => this._centerContainer());
+            } );
     }
 
     public update(): void {
@@ -103,12 +101,6 @@ export class GameScene extends FOX.ScenePixiJS {
         }
     }
 
-
-    private _centerContainer(): void {
-        const oOriginalSize = this.oOutput.oResolution;
-        this.oRenderScene.pivot.set( this.oRenderScene.width / 2, this.oRenderScene.height / 2 );
-        this.oRenderScene.position.set( oOriginalSize.width / 2, oOriginalSize.height / 2 );
-    }
 
     private _openMenu(): void {
         this.oScene.stackScene(PauseScene);

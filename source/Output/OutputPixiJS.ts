@@ -84,15 +84,15 @@ export class OutputPixiJS extends OutputManager {
 
 
     /** Function call for initialize Entities use by Output for render. */
-    public setSceneOutputEntities( oScene: ScenePixiJS ): void {
-        if( oScene.oRenderScene ){
+    public linkToScene( oScene: ScenePixiJS ): void {
+        if( oScene.oRenderScene && oScene.oRenderScene instanceof PIXI.Container ){
             this.oRootScene.addChild( oScene.oRenderScene );
         }
     }
 
     /** Function call for destroy Entities use by Output for render. */
-    public unsetSceneOutputEntities( oScene: ScenePixiJS ): void {
-        if( oScene.oRenderScene ){
+    public unlinkToScene( oScene: ScenePixiJS ): void {
+        if( oScene.oRenderScene && oScene.oRenderScene instanceof PIXI.Container ){
             this.oRootScene.removeChild( oScene.oRenderScene );
         }
     }

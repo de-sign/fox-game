@@ -31,7 +31,7 @@ export class MyScene extends FOX.ScenePixiJS {
         // Cube
         this._oCube.beginFill('#99FFFF');
         this._oCube.drawRect(0, 0, 200, 200);
-        this.oRenderScene.addChild(this._oCube);
+        this.oWorld.addChild(this._oCube);
 
     }
 
