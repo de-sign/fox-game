@@ -52,7 +52,8 @@ export class Store {
      */
     public set(sKey: string, uValue: any): Store {
         this._oData[sKey] = uValue;
-        // Sauvegarde si défini via option
+
+        // Sauvegarde si défini via options
         if( this._oStorableKeys[sKey] ){
             localStorage.setItem( sKey, JSON.stringify(uValue) );
         }
@@ -77,7 +78,7 @@ export class Store {
         const uValue = this._oData[sKey];
         delete this._oData[sKey];
 
-        // Supprime si défini par options
+        // Supprime si défini via options
         if( this._oStorableKeys[sKey] ){
             delete this._oStorableKeys[sKey];
             localStorage.removeItem(sKey);

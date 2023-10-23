@@ -4,7 +4,7 @@ import EventEmitter from 'eventemitter3';
 import { TObject } from '../Core/Type';
 import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Core/Constants';
 import { Engine } from '../Core/';
-import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from './';
+import { InputSource, KeyboardSource, GamepadSource, InputController, InputControllerSet, IControllerOptions } from './';
 
 
 /**
@@ -50,6 +50,9 @@ export class InputManager extends EventEmitter {
     public oSources: TObject<InputSource | null> = {};
     /** List of controllers */
     public aControllers: InputController[] = [];
+    /** Set of all controllers */
+    public oControllersSet: InputControllerSet = new InputControllerSet();
+
 
     /** Keyboard API */
     public oAPIKeyboard: any = null;
@@ -81,6 +84,11 @@ export class InputManager extends EventEmitter {
             if( this._oOptions.bGamepad ){
                 this._createGamepads();
             }
+        } );
+
+        // Ecouteur d'events
+        this.on( EVENT_NAME.INPUT_CONTROLLER_CREATE, oController => {
+            this.oControllersSet.add(oController);
         } );
 
         if( this._oOptions.bAutoCreateController ){

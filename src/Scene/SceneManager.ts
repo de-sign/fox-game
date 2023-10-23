@@ -66,10 +66,10 @@ export class SceneManager extends EventEmitter {
         const oScene = this.oScene;
         if( oScene ){
             oScene.update();
-
-            // Trigger
-            this.emit(EVENT_NAME.SCENE_UPDATE, oScene);
         }
+
+        // Trigger
+        this.emit(EVENT_NAME.SCENE_UPDATE, oScene);
     }
 
     /** Render Current Scene */
@@ -77,10 +77,10 @@ export class SceneManager extends EventEmitter {
         const oScene = this.oScene;
         if( oScene ){
             oScene.render();
-
-            // Trigger
-            this.emit(EVENT_NAME.SCENE_RENDER, oScene);
         }
+
+        // Trigger
+        this.emit(EVENT_NAME.SCENE_RENDER, oScene);
     }
     
 

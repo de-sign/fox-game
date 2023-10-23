@@ -36,7 +36,7 @@ export class MenuScene extends FOX.Scene {
         if( oHMenu ){
             this._oMenu = new FOX.Menu(oHMenu, {
                 sMenuClass: 'DS__Menu',
-                oController: this.oStore.get('GNL__Controllers')
+                oController: this.oInput.oControllersSet
             } );
 
             this._oMenu

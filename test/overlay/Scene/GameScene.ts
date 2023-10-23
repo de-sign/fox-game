@@ -25,7 +25,7 @@ export class GameScene extends FOX.ScenePixiJS {
         super.initialize();
 
         // Controller
-        this._oControllerSet = this.oStore.get('GNL__Controllers');
+        this._oControllerSet = this.oInput.oControllersSet;
 
         // Sprite
         const oSpriteBG = PIXI.Sprite.from('background');

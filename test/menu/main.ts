@@ -43,10 +43,6 @@ window.addEventListener('load', () => {
             }
         }
     } );
-
-    // ControllerSet
-    oGame.oStore.set('GNL__Controllers', new FOX.InputControllerSet());
-    oGame.oInput.on( FOX.EVENT_NAME.INPUT_CONTROLLER_CREATE, oController => oGame.oStore.get('GNL__Controllers').add(oController) );
     
     oGame.start();
     

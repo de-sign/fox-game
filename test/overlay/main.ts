@@ -80,10 +80,6 @@ window.addEventListener('load', () => {
     oGame.once(FOX.EVENT_NAME.ENGINE_START, () => {
         FOX.HTML.oBody.addClass('--started');
     } );
-
-    // ControllerSet
-    oGame.oStore.set('GNL__Controllers', new FOX.InputControllerSet());
-    oGame.oInput.on( FOX.EVENT_NAME.INPUT_CONTROLLER_CREATE, oController => oGame.oStore.get('GNL__Controllers').add(oController) );
     
     // Load Assets
     PIXI.Assets.addBundle('GameScene', {
