@@ -1,4 +1,4 @@
-import * as FOX from '../../source';
+import * as FOX from '../../src';
 
 
 const aBackgroundColor = [

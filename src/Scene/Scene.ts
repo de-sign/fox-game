@@ -1,9 +1,9 @@
 // Imports
 import EventEmitter from 'eventemitter3';
 
-import { Engine, Store } from '../Core';
-import { InputManager } from '../Input';
-import { OutputManager } from '../Output';
+import { Engine, Store } from '../Core/';
+import { InputManager } from '../Input/';
+import { OutputManager } from '../Output/';
 import { SceneManager } from './';
 
 

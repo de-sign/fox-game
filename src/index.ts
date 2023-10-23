@@ -1,7 +1,4 @@
-// Constants, Engine, Store and Scene
-export * from './Core/Constants';
-
-// Engine and Store
+// Type, Constants, Engine, Store and HTML
 export * from './Core';
 
 // Input

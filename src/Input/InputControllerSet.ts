@@ -1,5 +1,7 @@
-import { InputController } from '.';
-import { EVENT_NAME } from '..';
+// Imports
+import { EVENT_NAME } from '../Core/Constants';
+import { InputController } from './';
+
 
 /**
  * Controller Set class.

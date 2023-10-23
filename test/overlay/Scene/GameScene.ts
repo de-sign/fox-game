@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import * as FOX from '../../../source';
+import * as FOX from '../../../src';
 
 import { PauseScene } from './PauseScene';
 

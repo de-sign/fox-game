@@ -3,8 +3,8 @@ import EventEmitter from 'eventemitter3';
 
 import { TObject } from '../Core/Type';
 import { EVENT_NAME, INPUT_SOURCE_TYPE } from '../Core/Constants';
-import { Engine } from '../Core';
-import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from '.';
+import { Engine } from '../Core/';
+import { InputSource, KeyboardSource, GamepadSource, InputController, IControllerOptions } from './';
 
 
 /**

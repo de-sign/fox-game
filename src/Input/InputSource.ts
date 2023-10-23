@@ -2,7 +2,7 @@
 import EventEmitter from 'eventemitter3';
 
 import { TObject, TData } from '../Core/Type';
-import { Engine } from '../Core';
+import { Engine } from '../Core/';
 import { InputManager, InputController, IControllerOptions } from './';
 
 

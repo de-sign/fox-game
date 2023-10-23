@@ -1,6 +1,6 @@
 // Imports
 import { TObject, TFlag } from '../Core/Type';
-import { Engine } from './Engine';
+import { Engine } from './';
 
 
 

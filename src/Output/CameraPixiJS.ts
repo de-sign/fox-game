@@ -1,11 +1,12 @@
 // Imports
 import * as PIXI from 'pixi.js';
 import '@pixi/math-extras';
-
 import EventEmitter from 'eventemitter3';
-import { EVENT_NAME, Engine } from '../Core';
+
+import { EVENT_NAME } from '../Core/Constants';
+import { Engine } from '../Core/';
 import { OutputManager } from './';
-import { ScenePixiJS } from '../Scene';
+import { ScenePixiJS } from '../Scene/';
 
 
 /**
@@ -21,11 +22,25 @@ export class CameraPixiJS extends EventEmitter {
     public oOutput: OutputManager;
 
     /** Position of the center of the camera. */
-    public oPosition: PIXI.Point = new PIXI.Point(0, 0);
-    /** Zoom */
-    public nZoom: number = 1;
-    /** Rotation */
-    public nAngle: number = 0;
+    public readonly oPosition: PIXI.Point = new PIXI.ObservablePoint( () => this._bDirtyBounds = true, this, 0, 0);
+    /** Zoom value of camera. */
+    private _nZoom: number = 1;
+    public set nZoom(nZoom: number) {
+        this._nZoom = nZoom;
+        this._bDirtyBounds = true;
+    }
+    public get nZoom(): number {
+        return this._nZoom;
+    }
+    /** Rotation of camera in degree. */
+    public _nAngle: number = 0;
+    public set nAngle(nAngle: number) {
+        this._nAngle = nAngle;
+        this._bDirtyBounds = true;
+    }
+    public get nAngle(): number {
+        return this._nAngle;
+    }
 
     /** Entity follow by camera. */
     public oTarget: PIXI.DisplayObject | null = null;
@@ -34,6 +49,11 @@ export class CameraPixiJS extends EventEmitter {
 
     /** The world container watch by camera. */
     private _oRenderCamera: PIXI.Container = new PIXI.Container;
+
+    /** Used for optimize Bounds calculation */
+    private _bDirtyBounds: boolean = true;
+    /** Last calculated bounds for optimize. */
+    private _oSceneBounds: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 
 
     /** Constructor */
@@ -104,46 +124,52 @@ export class CameraPixiJS extends EventEmitter {
     /** Position of Camera to the World. */
     public getSceneBounds(): PIXI.Rectangle {
 
-        // Setup de la Matrice
-        const oMatrix = new PIXI.Matrix(),
-            oResolution = this.oOutput.oResolution,
-            oCenter = this.oPosition,
-            nHalfWidth = Math.floor(oResolution.width / 2),
-            nHalfHeight = Math.floor(oResolution.height / 2),
-            nLeft = oCenter.x - nHalfWidth,
-            nTop = oCenter.y - nHalfHeight,
-            nRight = nLeft + oResolution.width,
-            nBottom = nTop + oResolution.height,
-            nScale = 1 / this.nZoom;
-            
-        oMatrix
-            .translate(-oCenter.x, -oCenter.y)
-            .rotate(this.nAngle * Math.PI / 180)
-            .scale(nScale, nScale)
-            .translate(oCenter.x, oCenter.y);
+        if( this._bDirtyBounds ){
 
-        // Application de la matrice aux points du Rectangle de la Camera
-        const aPoints = [
-                new PIXI.Point(nLeft, nTop), // TopLeft
-                new PIXI.Point(nRight, nTop), // TopRight
-                new PIXI.Point(nLeft, nBottom), // BottomLeft
-                new PIXI.Point(nRight, nBottom)  // BottomRight
-            ],
-            aPositionsX: number[] = [],
-            aPositionsY: number[] = [];
+            // Setup de la Matrice
+            const oMatrix = new PIXI.Matrix(),
+                oResolution = this.oOutput.oResolution,
+                oCenter = this.oPosition,
+                nHalfWidth = oResolution.width / 2,
+                nHalfHeight = oResolution.height / 2,
+                nLeft = oCenter.x - nHalfWidth,
+                nTop = oCenter.y - nHalfHeight,
+                nRight = nLeft + oResolution.width,
+                nBottom = nTop + oResolution.height,
+                nScale = 1 / this.nZoom;
+                
+            oMatrix
+                .translate(-oCenter.x, -oCenter.y)
+                .rotate(this.nAngle * PIXI.DEG_TO_RAD)
+                .scale(nScale, nScale)
+                .translate(oCenter.x, oCenter.y);
 
-        aPoints.forEach( oPoint => {
-            const oOrientedPoint = oMatrix.apply(oPoint);
-            aPositionsX.push(oOrientedPoint.x);
-            aPositionsY.push(oOrientedPoint.y);
-        } );
+            // Application de la matrice aux points du Rectangle de la Camera
+            const aPoints = [
+                    new PIXI.Point(nLeft, nTop), // TopLeft
+                    new PIXI.Point(nRight, nTop), // TopRight
+                    new PIXI.Point(nLeft, nBottom), // BottomLeft
+                    new PIXI.Point(nRight, nBottom)  // BottomRight
+                ],
+                aPositionsX: number[] = [],
+                aPositionsY: number[] = [];
 
-        // Récupération du point TopLeft et BottomRight
-        const oTopLeft = new PIXI.Point( Math.min(...aPositionsX), Math.min(...aPositionsY) ),
-            oBottomRight = new PIXI.Point( Math.max(...aPositionsX), Math.max(...aPositionsY) ),
-            oSizeVector = oBottomRight.subtract(oTopLeft);
+            aPoints.forEach( oPoint => {
+                const oOrientedPoint = oMatrix.apply(oPoint);
+                aPositionsX.push(oOrientedPoint.x);
+                aPositionsY.push(oOrientedPoint.y);
+            } );
 
-        return new PIXI.Rectangle(oTopLeft.x, oTopLeft.y, oSizeVector.x, oSizeVector.y);
+            // Récupération du point TopLeft et BottomRight
+            const oTopLeft = new PIXI.Point( Math.min(...aPositionsX), Math.min(...aPositionsY) ),
+                oBottomRight = new PIXI.Point( Math.max(...aPositionsX), Math.max(...aPositionsY) ),
+                oSizeVector = oBottomRight.subtract(oTopLeft);
+
+            this._oSceneBounds = new PIXI.Rectangle(oTopLeft.x, oTopLeft.y, oSizeVector.x, oSizeVector.y);
+            this._bDirtyBounds = false;
+        }
+
+        return this._oSceneBounds;
     }
 
 
@@ -151,13 +177,15 @@ export class CameraPixiJS extends EventEmitter {
     private _centerInView(): void {
 
         const oResolution = this.oOutput.oResolution,
-            nHalfWidth = Math.floor(oResolution.width / 2),
-            nHalfHeight = Math.floor(oResolution.height / 2);
+            nHalfWidth = oResolution.width / 2,
+            nHalfHeight = oResolution.height / 2;
         
         // Positionne la camera au centre de l'écran
         this._oRenderCamera.position.set( nHalfWidth, nHalfHeight );
+        this._bDirtyBounds = true;
 
-        this.emit(EVENT_NAME.CAMERA_UPDATE, ['size']);
+        // Trigger
+        this.emit(EVENT_NAME.CAMERA_RESIZE);
     }
 
     /** Reposition camera into Restriction Area. */
@@ -169,29 +197,29 @@ export class CameraPixiJS extends EventEmitter {
 
             // Si la largeur de restriction est plus petite que la camera
             if( this.oRestrictionArea.width < oCameraBounds.width ){
-                this.oPosition.x = Math.floor(this.oRestrictionArea.width / 2);
+                this.oPosition.x = this.oRestrictionArea.width / 2;
             } else {
                 // Trop à gauche
                 if( oCameraBounds.x < this.oRestrictionArea.x ){
-                    this.oPosition.x = Math.floor(oCameraBounds.width / 2);
+                    this.oPosition.x = oCameraBounds.width / 2;
                 }
                 // Trop à droite
                 else if( oCameraBounds.right > this.oRestrictionArea.right ) {
-                    this.oPosition.x = this.oRestrictionArea.right - Math.floor(oCameraBounds.width / 2);
+                    this.oPosition.x = this.oRestrictionArea.right - oCameraBounds.width / 2;
                 }
             }
 
             // Si la hauteur de restriction est plus petite que la camera
             if( this.oRestrictionArea.height < oCameraBounds.height ){
-                this.oPosition.y = Math.floor(this.oRestrictionArea.height / 2);
+                this.oPosition.y = this.oRestrictionArea.height / 2;
             } else {
                 // Trop en haut
                 if( oCameraBounds.y < this.oRestrictionArea.y ){
-                    this.oPosition.y = Math.floor(oCameraBounds.height / 2);
+                    this.oPosition.y = oCameraBounds.height / 2;
                 }
                 // Trop en bas
                 else if( oCameraBounds.bottom > this.oRestrictionArea.bottom ) {
-                    this.oPosition.y = this.oRestrictionArea.bottom - Math.floor(oCameraBounds.height / 2);
+                    this.oPosition.y = this.oRestrictionArea.bottom - oCameraBounds.height / 2;
                 }
             }
         }

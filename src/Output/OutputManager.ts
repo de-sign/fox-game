@@ -3,8 +3,8 @@ import EventEmitter from 'eventemitter3';
 import * as PIXI from 'pixi.js';
 
 import { EVENT_NAME, OUTPUT_ASPECT_TYPE } from '../Core/Constants';
-import { Engine } from '../Core';
-import { Scene } from '../Scene';
+import { Engine } from '../Core/';
+import { Scene } from '../Scene/';
 
 
 /**
@@ -196,8 +196,8 @@ export class OutputManager extends EventEmitter {
             // Redimensionnement en fonction de l'aspect choisi
             if( this._nAspectType == OUTPUT_ASPECT_TYPE.KEEP_RATIO ) {
                 // Redimensionnement en gardant le ratio d'aspect
-                nResizeWidth = Math.floor(this.oInitialResolution.width * nMinScale);
-                nResizeHeight = Math.floor(this.oInitialResolution.height * nMinScale);
+                nResizeWidth = this.oInitialResolution.width * nMinScale;
+                nResizeHeight = this.oInitialResolution.height * nMinScale;
             } else {
                 // Redimensionnement aux dimensions de la cible
                 nResizeWidth = nTargetWidth;
@@ -237,8 +237,8 @@ export class OutputManager extends EventEmitter {
 
                 // Resolution en fonction du SCALE et de la VIEW
                 case OUTPUT_ASPECT_TYPE.KEEP_RATIO_AND_EXTEND :
-                    nResolutionWidth = Math.floor(nTargetWidth / nScaleX);
-                    nResolutionHeight = Math.floor(nTargetHeight / nScaleY);
+                    nResolutionWidth = nTargetWidth / nScaleX;
+                    nResolutionHeight = nTargetHeight / nScaleY;
                     break;
 
                 // Resolution aux dimensions de la VIEW

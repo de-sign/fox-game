@@ -3,8 +3,8 @@ import EventEmitter from 'eventemitter3';
 
 import { TObject, TDataList, TValue } from '../Core/Type';
 import { EVENT_NAME, GAMEPAD_BUTTON_DEAD_ZONE } from '../Core/Constants';
-import { Engine, Store } from '../Core';
-import { InputManager, InputSource } from '.';
+import { Engine, Store } from '../Core/';
+import { InputManager, InputSource } from './';
 
 
 /**

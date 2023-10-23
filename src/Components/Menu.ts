@@ -2,9 +2,9 @@
 import EventEmitter from 'eventemitter3';
 
 import { TObject } from '../Core/Type';
-import { HTML } from '../Core/HTML';
 import { EVENT_NAME, MENU_CURSOR_VERTICAL } from '../Core/Constants';
-import { InputController, InputControllerSet } from '../Input';
+import { HTML } from '../Core/HTML';
+import { InputController, InputControllerSet } from '../Input/';
 
 
 type ControllerActions = TObject<keyof Menu | Function>;

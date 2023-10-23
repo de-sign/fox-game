@@ -5,9 +5,9 @@ import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
 import { TListeners } from './Type';
 import { EVENT_NAME } from './Constants';
 import { Store, IStoreOptions } from './Store';
-import { InputManager, IInputOptions } from '../Input';
-import { SceneManager, ISceneOptions } from '../Scene';
-import { OutputManager, IOutputOptions } from '../Output';
+import { InputManager, IInputOptions } from '../Input/';
+import { SceneManager, ISceneOptions } from '../Scene/';
+import { OutputManager, IOutputOptions } from '../Output/';
 
 
 /**

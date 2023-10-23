@@ -1,9 +1,9 @@
 // Imports
 import * as PIXI from 'pixi.js';
 
-import { Engine } from '../Core';
-import { OutputManager, IOutputOptions } from '../Output';
-import { ScenePixiJS } from '../Scene';
+import { Engine } from '../Core/';
+import { OutputManager, IOutputOptions } from '../Output/';
+import { ScenePixiJS } from '../Scene/';
 
 
 /**

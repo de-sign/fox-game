@@ -2,7 +2,7 @@
 import * as PIXI from 'pixi.js';
 
 import { SceneManager, Scene } from './';
-import { CameraPixiJS } from '../Output';
+import { CameraPixiJS } from '../Output/';
 
 /**
  * Class to create a new Scene, use for be extend.

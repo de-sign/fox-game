@@ -2,8 +2,8 @@
 import EventEmitter from 'eventemitter3';
 
 import { EVENT_NAME } from '../Core/Constants';
-import { Engine } from '../Core';
-import { Scene } from './Scene';
+import { Engine } from '../Core/';
+import { Scene } from './';
 
 
 /**

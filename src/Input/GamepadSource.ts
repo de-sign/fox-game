@@ -1,9 +1,6 @@
 // Imports
 import { TData, TValue } from '../Core/Type';
-import {
-    EVENT_NAME, INPUT_SOURCE_TYPE,
-    GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME
-} from '../Core/Constants';
+import { EVENT_NAME, INPUT_SOURCE_TYPE, GAMEPAD_BUTTON_DEFAULT_NAME, GAMEPAD_BUTTON_PLAYSTATION_NAME, GAMEPAD_BUTTON_XBOX_NAME } from '../Core/Constants';
 import { InputManager, InputSource } from './';
 
 
@@ -47,7 +44,7 @@ export class GamepadSource extends InputSource {
     public update(): boolean {
 
         let bUpdated = false;
-        const aUpdated = [];
+        const aUpdated: string[] = [];
 
         this._oGamepad = (this.oInput.aAPIGamepads || [])[ this.nIndex ];
 

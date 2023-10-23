@@ -1,7 +1,8 @@
 // Import
 import EventEmitter from 'eventemitter3';
 
-import { TObject, TListeners, TData, TEmptyData, TFlag } from '../Core/Type';
+import { TListeners, TData, TEmptyData, TFlag } from '../Core/Type';
+
 
 const rData = /data-/;
 

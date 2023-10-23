@@ -30,6 +30,7 @@ export enum EVENT_NAME {
     OUTPUT_RESIZE = 'OuputResize',
 
     CAMERA_UPDATE = 'CameraUpdate',
+    CAMERA_RESIZE = 'CameraResize',
 
     // Components
     MENU_UPDATE = 'MenuUpdate',

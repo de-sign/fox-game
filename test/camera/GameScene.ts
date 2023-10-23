@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import '@pixi/math-extras';
 
-import * as FOX from '../../source';
+import * as FOX from '../../src';
 
 
 const oPointZERO = new PIXI.Point(0, 0);

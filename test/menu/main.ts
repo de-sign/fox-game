@@ -1,7 +1,7 @@
 // Import
 import './style.css';
 
-import * as FOX from '../../source';
+import * as FOX from '../../src';
 import { MenuScene } from './MenuScene';
 
 window.addEventListener('load', () => {
