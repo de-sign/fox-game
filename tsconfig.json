@@ -10,6 +10,8 @@
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
+        "resolvePackageJsonImports": false,
+        "resolvePackageJsonExports": false,
         "isolatedModules": true,
         "noEmit": true,
 
@@ -21,3 +23,4 @@
     },
     "include": ["src"]
 }
+

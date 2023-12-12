@@ -1,7 +1,7 @@
 // Import
 import EventEmitter from 'eventemitter3';
 
-import { TListeners, TData, TEmptyData, TFlag } from '../Core/Type';
+import { TListeners, TData, TEmptyData, TFlag, TCallback } from '../Core/Type';
 
 
 const rData = /data-/;
@@ -585,17 +585,17 @@ export class HTML extends EventEmitter {
     }
 
     // Listener
-    public onEvent(sType: keyof HTMLElementEventMap, fCallback: (...args: any[]) => void, bCapture?: boolean): this {
+    public onEvent(sType: keyof HTMLElementEventMap, fCallback: TCallback, bCapture?: boolean): this {
         const sName = this._modifyListener(true, sType, bCapture);
         return this.on(sName, fCallback);
     }
 
-    public onceEvent(sType: keyof HTMLElementEventMap, fCallback: (...args: any[]) => void, bCapture?: boolean): this {
+    public onceEvent(sType: keyof HTMLElementEventMap, fCallback: TCallback, bCapture?: boolean): this {
         const sName = this._modifyListener(true, sType, bCapture);
         return this.once(sName, fCallback);
     }
 
-    public offEvent(sType: keyof HTMLElementEventMap, fCallback: (...args: any[]) => void, bCapture?: boolean): this {
+    public offEvent(sType: keyof HTMLElementEventMap, fCallback: TCallback, bCapture?: boolean): this {
         const sName = this._modifyListener(true, sType, bCapture);
         return this.off(sName, fCallback);
     }

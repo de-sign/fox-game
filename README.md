@@ -30,217 +30,320 @@ Lexique :
     * : Emit event
     # : #{ Commentary #}
 
+
 ### 01 - Creation of Engine
 Retrace la pile d'execution lors de la création du moteur de jeu.
 
     + new Engine
+        - super()
+            # Inherit of EventEmitter3
+
         + new Ticker
             # See PIXI.Ticker for details
 
         + new Store
-            - StoreM._recover()
+            - Store._recover()
                 # Use LocalStorage API
 
         + new InputManager
+            - super()
+                # Inherit of EventEmitter3
             + new InputControllerSet
-            ~{ Engine.ENGINE_START [ONCE]
-                ?{ IF $OPTIONS.bKeyboard
-                    - InputM._createKeyboard()
-                        # Use Keybaord API
-                        - InputM._getSource()
-                            ?{ IF "unknow source"
-                                + new KeyboardSource
-                                    - super()
-                                        # Inherit of InsputSource
-                                    - KeyboardS._createButtonsName()
-                                * InputM.INPUT_SOURCE_CREATE
-                            ?}
-                        ~{ Window.KEYUP && Window.KEYDOWN
-                            - InputS.addEvent
-                        ~}
-                ?}
-                ?{ IF $OPTIONS.bGamepad
-                    - InputM._createGamepad()
-                        # Use Gamepad API
-                        - InputM._getSource()
-                            ?{ IF "unknow source"
-                                + new GamepadSource
-                                    - super()
-                                        # Inherit of InsputSource
-                                    - GamepadS._createButtonsName()
-                                * InputM.INPUT_SOURCE_CREATE
-                            ?}
-                ?}
-            ~}
-            ~{ InputM.INPUT_CONTROLLER_CREATE
-                - InputCSet.add()
-                    ~{ InputC.INPUT_CONTROLLER_UPDATE
-                        # Update internal properties
-                    ~}
-            ~}
+            ~ Engine.ENGINE_START - #021 [ONCE]
+            ~ InputManager.INPUT_CONTROLLER_CREATE - #042
             ?{ IF $OPTIONS.bAutoCreateController
-                ~{ InputM.INPUT_SOURCE_CREATE
-                    - InputM.createController()
-                        + new InputController
-                            - InputC._restore()
-                            ~{ InputS.INPUT_SOURCE_UPDATE
-                                - InputC._updateButtons()
-                                    - InputC._setButtonOfSource()
-                                        - InputS.getButton()
-                                            ?{ IF "unknow button"
-                                                - InputS._getButtonsName()
-                                            ?}
-                                        - InputC.getButton()
-                                ?{ IF "one button updated"
-                                    * InputC.INPUT_CONTROLLER_UPDATE
-                                    * InputM.INPUT_CONTROLLER_UPDATE
-                                ?}
-                            ~}
-                        * InputM.INPUT_CONTROLLER_CREATE
-                ~}
+                ~ InputManager.INPUT_SOURCE_CREATE - #041
             ?}
 
         + new SceneManager
-            ~{ Engine.ENGINE_START [ONCE]
-                ?{ IF $OPTIONS.cStartingScene
-                    - SceneM.changeScene()
-                        ~{ Engine.ENGINE_UPDATE [ONCE]
-                            - SceneM._unsetScene()
-                                - Scene.destroy()
-                                * SceneM.SCENE_DESTROY
-                            - SceneM._setScene()
-                                ?{ SWITCH $NEWSCENE
-                                    + new ScenePixiJS
-                                        - super()
-                                            # Inherit of Scene
-                                        + new CameraPixiJS
-                                            - CameraPixiJS._centerInView()
-                                                * CameraPixiJS.CAMERA_RESIZE
-                                            ~{ OutputM.OUTPUT_RESIZE
-                                                - CameraPixiJS._centerInView()
-                                                    * CameraPixiJS.CAMERA_RESIZE
-                                            ~}
-                                ?}
-                                - Scene.initialize()
-                                    # Surchaged by DEVELOPPER
-                                    - CameraPixiJS.linkTo()
-                                * SceneM.SCENE_INITIALIZE
-                            * SceneM.SCENE_CHANGE
-                        ~}
-                ?}
-            ~}
+            - super()
+                # Inherit of EventEmitter3
+            ~ Engine.ENGINE_START - #022 [ONCE]
 
         ?{ SWITCH $OPTIONS.cOutputManager
             + new OutputPixiJS
                 - super()
                     # Inherit of OutputManager
-                    ?{ IF $OPTIONS.nAspectType != $OUTPUT_ASPECT_TYPE.INITIAL
-                        ~{ Window.RESIZE
-                            - OutputM.resize()
-                                ~{ Engine.ENGINE_RENDER [ONCE]
-                                    - OutputPixiJS._resizeView()
-                                    - OutputPixiJS._scaleScene()
-                                    * OutputM.OUTPUT_RESIZE
-                                ~}
-                        ~}
-                    ?}
-                - OutputM._setRenderer()
+                    - super()
+                        # Inherit of EventEmitter3
+                    ~ Window.RESIZE - #051
+                - OutputManager._setRenderer()
                     - PIXI.autoDetectRenderer()
-                    ~{ Engine.ENGINE_START [ONCE]
-                        - OutputM.resize()
-                            - OutputPixiJS._resizeView()
-                            - OutputPixiJS._scaleScene()
-                            * OutputM.OUTPUT_RESIZE
-                    ~}
+                        # See PIXI.autoDetectRenderer for details
+                    ~ Engine.ENGINE_START - #023 [ONCE]
         ?}
 
-        ~{ SceneM.SCENE_INITIALIZE
-            - OutputM.linktToScene()
-        ~}
-        ~{ SceneM.SCENE_DESTROY
-            - OutputM.unlinkToScene()
-        ~}
+        ~ SceneManager.SCENE_INITIALIZE - #034
+        ~ SceneManager.SCENE_DESTROY - #035
             
         - Ticker.add()
             # See PIXI.Ticker for details
             - Engine._update()
             - Engine._render()
 
+
 ### 02 - Start of Engine
 Retrace la pile d'execution lors du lancement du moteur de jeu.
 
-    - Ticker.start()
-        # See PIXI.Ticker for details
-    * Engine.ENGINE_START
-        # TODO Event Listener List
+    - Engine.start()
+        - Ticker.start()
+            # See PIXI.Ticker for details
+
+        * Engine.ENGINE_START
+            ~{ #021 [ONCE] - new InputManager 
+                ?{ IF $OPTIONS.bKeyboard
+                    - InputManager._createKeyboard()
+                        # Use Keybaord API
+                        - InputManager._getSource()
+                            # See part 04 - Creation of Input Source
+                        ~ Window.KEYUP / Window.KEYDOWN - #052
+                ?}
+                ?{ IF $OPTIONS.bGamepad
+                    - InputManager._createGamepad()
+                        # Use Gamepad API
+                        - InputManager._getSource()
+                            # See part 04 - Creation of Input Source
+                ?}
+            ~}
+            ~{ #022 [ONCE] - new SceneManager
+                ?{ IF $OPTIONS.cStartingScene
+                    - SceneManager.changeScene()
+                        ~ Engine.ENGINE_UPDATE - #031 [ONCE]
+                ?}
+            ~}
+            ~{ #023 [ONCE] - OutputManager._setRenderer() 
+                - OutputManager.resize()
+                    - OutputPixiJS._resizeView()
+                    - OutputPixiJS._scaleScene()
+                    * OutputManager.OUTPUT_RESIZE
+                        ~{ #033 - new CameraPixiJS 
+                            - CameraPixiJS._centerInView()
+                                * CameraPixiJS.CAMERA_RESIZE
+                        ~}
+            ~}
+
 
 ### 03 - Life of Engine
 Retrace la pile d'execution à chaque frame du moteur de jeu.
 
     - Engine._update()
         * Engine.ENGINE_UPDATE
-        - InputM.update()
+            ~{ #031 [ONCE] - SceneManager.changeScene() 
+                - SceneManager._unsetScene()
+                    - ScenePixiJS.destroy()
+                        - CameraPixiJS.unlinkTo()
+                        - CameraPixiJS.destroy()
+                    * SceneManager.SCENE_DESTROY
+                        ~{ #035 - new Engine 
+                            - OutputManager.unlinkToScene()
+                        ~}
+                - SceneManager._setScene()
+                    ?{ SWITCH $NEWSCENE
+                        + new ScenePixiJS
+                            - super()
+                                # Inherit of Scene
+                                - super()
+                                    # Inherit of EventEmitter3
+                            + new CameraPixiJS
+                                - super()
+                                    # Inherit of EventEmitter3
+                                - CameraPixiJS._centerInView()
+                                    * CameraPixiJS.CAMERA_RESIZE
+                                ~ OutputManager.OUTPUT_RESIZE - #033
+                    ?}
+                    - Scene.initialize()
+                        # Surchaged by DEVELOPPER
+                        - CameraPixiJS.linkTo()
+                    * SceneManager.SCENE_INITIALIZE
+                        ~{ #034 - new Engine 
+                            - OutputManager.linktToScene()
+                        ~}
+                * SceneManager.SCENE_CHANGE
+            ~}
+
+        - InputManager.update()
             ?{ IF $OPTIONS.bGamepad
-                - InputM._createGamepad()
+                - InputManager._createGamepad()
                     # Use Gamepad API
-                    - InputM._getSource()
-                        ?{ IF "unknow source"
-                            + new GamepadSource
-                            * InputM.INPUT_SOURCE_CREATE
-                        ?}
+                    - InputManager._getSource()
+                        # See part 04 - Creation of Input Source
             ?}
             ?{ SWITCH InputSource
-                - KeyboardS.update()
-                    - InputS._setButtonValue()
-                    - KeyboardS._setButtonName()
-                        # Only if Keyboard API not SUPPORTED
-                    ?{ IF "one button updated"
-                        * InputS.INPUT_SOURCE_UPDATE
+                - KeyboardSource.update()
+                    - InputSource._setButtonValue()
+                    ?{ IF "Keyboard API not SUPPORTED"
+                        - KeyboardSource._setButtonName()
                     ?}
-                - GamepadS.update()
+                    ?{ IF "one button updated"
+                        $bSourceUpdate = true
+                    ?}
+                - GamepadSource.update()
                     ?{ IF "gamepad reconnected"
-                        * InputM.INPUT_SOURCE_RECONNECT
+                        * InputManager.INPUT_SOURCE_RECONNECT
                     ?}
                     ?{ IF "gamepad disconected"
-                        * InputM.INPUT_SOURCE_DISCONNECT
+                        * InputManager.INPUT_SOURCE_DISCONNECT
                     ?}
-                    - InputS._setButtonValue()
+                    - InputSource._setButtonValue()
                     ?{ IF "gamepad reconnected, disconected or one button updated"
-                        * InputM.INPUT_SOURCE_UPDATE
+                        $bSourceUpdate = true
                     ?}
             ?}
-            ?{ IF "source updated"
-                * InputM.INPUT_SOURCE_UPDATE
+            ?{ IF $bSourceUpdate
+                * InputSource.INPUT_SOURCE_UPDATE
+                    ~{ #036 - new InputController
+                        - InputController._updateButtons()
+                            - InputController._setButtonOfSource()
+                                - InputSource.getButton()
+                                    ?{ IF "unknow button"
+                                        - InputSource._getButtonsName()
+                                    ?}
+                                - InputController.getButton()
+                        ?{ IF "one button updated"
+                            * InputController.INPUT_CONTROLLER_UPDATE
+                                ~{ #037 - InputControllerSet.add() 
+                                    # Update InputControllerSet internal properties
+                                ~}
+                            * InputManager.INPUT_CONTROLLER_UPDATE
+                        ?}
+                    ~}
+                * InputManager.INPUT_SOURCE_UPDATE
             ?}
-            * InputM.INPUT_UPDATE
+            * InputManager.INPUT_UPDATE
 
-        - SceneM.update()
+        - SceneManager.update()
             ?{ IF "current scene"
                 - ScenePixiJS.update()
                     # Surchaged by DEVELOPPER
             ?}
-            * SceneM.SCENE_UPDATE
+            * SceneManager.SCENE_UPDATE
+
         * Engine.ENGINE_POST_UPDATE
+<br/>
 
     - Engine._render()
-        - SceneM.render()
+        * Engine.ENGINE_RENDER
+            ~{ #032 [ONCE] - OutputManager.resize() 
+                - OutputPixiJS._resizeView()
+                - OutputPixiJS._scaleScene()
+                * OutputManager.OUTPUT_RESIZE
+                    ~{ #033 - new CameraPixiJS 
+                        - CameraPixiJS._centerInView()
+                            * CameraPixiJS.CAMERA_RESIZE
+                    ~}
+            ~}
+
+        - TWEEN.update()
+
+        - SceneManager.render()
             ?{ IF "current scene"
                 - ScenePixiJS.render()
                     # Surchaged by DEVELOPPER
-                    - CameraPixiJS.update();
+                    - CameraPixiJS.update()
+                        - CameraPixiJS._restrictPosition()
+                            - CameraPixiJS.getSceneBounds()
+                        ?{ IF "camera updated"
+                            * CameraPixiJS.CAMERA_UPDATE
+                        ?}
             ?}
-            * SceneM.SCENE_RENDER
+            * SceneManager.SCENE_RENDER
+
         - OutputPixiJS.render()
             - PIXI.render()
             - super()
                 # Inherit of OutputManager
-                * OutputM.OUTPUT_RENDER
+                * OutputManager.OUTPUT_RENDER
+
+        * Engine.ENGINE_POST_RENDER
 
 
-### 04 - Destroy of Engine
+### 04 - Creation of Input Source
+Retrace la pile d'execution à la création d'une source d'entrée.
+
+    - InputManager._getSource()
+        # Call at Engine.start() or InputManager.update()
+        ?{ IF "unknow source"
+            + new GamepadSource / KeyboardSource
+                - super()
+                    # Inherit of InputSource
+                    - super()
+                        # Inherit of EventEmitter3
+                - InputSource._createButtonsName()
+            * InputManager.INPUT_SOURCE_CREATE
+                ~{ #041 - new InputManager 
+                    - InputManager.createController()
+                        + new InputController
+                            - super()
+                                # Inherit of EventEmitter3
+                            - InputController._restore()
+                            ~ InputSource.INPUT_SOURCE_UPDATE - #036
+                        * InputManager.INPUT_CONTROLLER_CREATE
+                            ~{ #042 - new InputManager 
+                                - InputControllerSet.add()
+                                    ~ InputController.INPUT_CONTROLLER_UPDATE #37
+                            ~}
+                ~}
+        ?}
 
 
-## Manager LifeCycle
+### 05 - Window Event
+Retrace la pile d'execution aux déclenchement de divers evenements WINDOW.
+
+    - Window.RESIZE
+        ~{ #051 - new OutputPixiJS
+            ?{ IF $OPTIONS.nAspectType != $.OUTPUT_ASPECT_TYPE.INITIAL
+                - OutputManager.resize()
+                    ~ Engine.ENGINE_RENDER - #032 [ONCE]
+            ?}
+        ~}
+<br/>
+
+    - Window.KEYUP / KEYDOWN
+        ~{ #052 - InputManager._createKeyboard()
+            - KeyboardSource.addEvent()
+        ~}
 
 
-### 11 - 
+### 06 - Destroy of Engine
+Retrace la pile d'execution à la destruction du moteur de jeu.
+
+    - Engine.destroy()
+        - Engine.removeAllListeners()
+            # Inherit of EventEmitter3
+
+        - Engine.removeAllWindowListeners()
+
+        - Ticker.destroy()
+            # See PIXI.Ticker for details
+
+        - InputManager.destroy()
+            - InputManager.removeAllListeners()
+                # Inherit of EventEmitter3
+            ?{ SWITCH InputSource
+                - InputSource.destroy()
+                    - InputSource.removeAllListeners()
+                        # Inherit of EventEmitter3
+            ?}
+            - InputController.destroy()
+                - InputController.removeAllListeners()
+                    # Inherit of EventEmitter3
+
+        - SceneManager.destroy()
+            - InputSource.removeAllListeners()
+                # Inherit of EventEmitter3
+            - SceneManager._unsetScene()
+                - Scene.destroy()
+                    - CameraPixiJS.unlinkTo()
+                    - CameraPixiJS.destroy()
+                * SceneManager.SCENE_DESTROY
+                    ~{ #035 - new Engine 
+                        - OutputManager.unlinkToScene()
+                    ~}
+
+        - OutputPixiJS.destroy()
+            - PIXI.IRenderer.destroy()
+                # See PIXI.autoDetectRenderer for details
+            - OutputManager.destroy()
+                # Inherit of OutputManager
+                - InputSource.removeAllListeners()
+                    # Inherit of EventEmitter3

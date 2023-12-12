@@ -17,12 +17,10 @@ export class GameScene extends FOX.ScenePixiJS {
         super(oMScene);
     }
 
-    destroy() {
-    }
+    destroy() { }
 
     
     public initialize(): void { 
-        super.initialize();
 
         // Controller
         this._oControllerSet = this.oInput.oControllersSet;
@@ -37,6 +35,11 @@ export class GameScene extends FOX.ScenePixiJS {
             // Character
         this._oCube.anchor.set(0.5);
         this._oCube.position.set(oSpriteBG.width / 2, oSpriteBG.height / 2);
+
+        // Camera
+        super.initialize();
+        this.oCamera.oPosition.set(oSpriteBG.width / 2, oSpriteBG.height / 2);
+        this.oCamera.update();
 
         // Menu
         const oHMenu = FOX.HTML.get('GameMenuButton');
@@ -103,6 +106,8 @@ export class GameScene extends FOX.ScenePixiJS {
 
 
     private _openMenu(): void {
-        this.oScene.stackScene(PauseScene);
+        this.oScene.stackScene( {
+            cScene: PauseScene
+        } );
     }
 }

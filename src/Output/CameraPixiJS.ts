@@ -4,9 +4,9 @@ import '@pixi/math-extras';
 import EventEmitter from 'eventemitter3';
 
 import { EVENT_NAME } from '../Core/Constants';
-import { Engine } from '../Core/';
-import { OutputManager } from './';
-import { ScenePixiJS } from '../Scene/';
+import { Engine } from '../Core';
+import { OutputManager } from '.';
+import { ScenePixiJS } from '../Scene';
 
 
 /**
@@ -33,7 +33,7 @@ export class CameraPixiJS extends EventEmitter {
         return this._nZoom;
     }
     /** Rotation of camera in degree. */
-    public _nAngle: number = 0;
+    private _nAngle: number = 0;
     public set nAngle(nAngle: number) {
         this._nAngle = nAngle;
         this._bDirtyBounds = true;

@@ -12,7 +12,7 @@ import { SceneManager } from './';
  * 
  * @class
  */
-export class Scene extends EventEmitter {
+export abstract class Scene extends EventEmitter {
 
 
     /** Engine use for update the Scene. */

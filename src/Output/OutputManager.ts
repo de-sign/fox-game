@@ -3,6 +3,7 @@ import EventEmitter from 'eventemitter3';
 import * as PIXI from 'pixi.js';
 
 import { EVENT_NAME, OUTPUT_ASPECT_TYPE } from '../Core/Constants';
+
 import { Engine } from '../Core/';
 import { Scene } from '../Scene/';
 
@@ -33,7 +34,7 @@ const oDefaultOutputOptions = {
  * Output Manager class.
  * @class
  */
-export class OutputManager extends EventEmitter {
+export abstract class OutputManager extends EventEmitter {
     
     
     /** Engine that created the manager. */
@@ -52,9 +53,6 @@ export class OutputManager extends EventEmitter {
     public get nAspectType(): number {
         return this._nAspectType;
     }
-    
-    /** Root Scene of the manager. */
-    public readonly oRootScene: any = null;
     /** Return size of renderer. */
     public get oSizeView(): any {
         return null;
@@ -73,6 +71,8 @@ export class OutputManager extends EventEmitter {
     protected _oOptions: IOutputOptions;
     /** Render of the manager. */
     protected _oRenderer: any = null;
+    /** Root Scene of the manager. */
+    protected _oRootScene: any;
 
     /** Constructor */
     constructor(oEngine: Engine, oOutputOptions?: IOutputOptions) {
@@ -90,13 +90,11 @@ export class OutputManager extends EventEmitter {
         this.oResolution = new PIXI.Rectangle(0, 0, this._oOptions.nWidth, this._oOptions.nHeight);
 
         // Ecouteurs pour RESIZE
-        if( this._nAspectType != OUTPUT_ASPECT_TYPE.INITIAL ){
-            this.oEngine.addWindowListener('resize', () => {
-                if( this._oRenderer && this._nAspectType != OUTPUT_ASPECT_TYPE.INITIAL ){
-                    this.resize();
-                }
-            } );
-        }
+        this.oEngine.addWindowListener('resize', () => {
+            if( this._oRenderer && this._nAspectType != OUTPUT_ASPECT_TYPE.INITIAL ){
+                this.resize();
+            }
+        } );
     }
 
     /** Destructor */
@@ -110,7 +108,7 @@ export class OutputManager extends EventEmitter {
         // Trigger
         this.emit(EVENT_NAME.OUTPUT_RENDER);
     }
-    
+
 
     /** Function call for initialize Entities used by Output for render. */
     public linkToScene( oScene: Scene ): void {
@@ -125,7 +123,7 @@ export class OutputManager extends EventEmitter {
             console.log('OutputManager.unlinkToScene', this, oScene);
         }
     }
-
+    
 
     /** Change Aspect mode of renderer */
     public setAspect(_nAspectType: number): void {

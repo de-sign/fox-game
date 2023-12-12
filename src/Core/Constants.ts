@@ -32,6 +32,10 @@ export enum EVENT_NAME {
     CAMERA_UPDATE = 'CameraUpdate',
     CAMERA_RESIZE = 'CameraResize',
 
+    TRANSITION_INITIALIZE = 'TransitionInitialize',
+    TRANSITION_END = 'TransitionEnd',
+    TRANSITION_DESTROY = 'TransitionDestroy',
+
     // Components
     MENU_UPDATE = 'MenuUpdate',
     MENU_MOVE = 'MenuMove',

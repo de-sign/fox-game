@@ -7,7 +7,9 @@ window.addEventListener('load', () => {
 
         // Scene
         oScene: {
-            cStartingScene: MyScene,
+            oStartingScene: {
+                cScene: MyScene
+            }
         },
         
         // Input

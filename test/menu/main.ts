@@ -27,7 +27,9 @@ window.addEventListener('load', () => {
 
         // Scene
         oScene: {
-            cStartingScene: MenuScene
+            oStartingScene: {
+                cScene: MenuScene
+            }
         },
         
         // Output

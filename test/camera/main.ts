@@ -57,15 +57,15 @@ window.addEventListener('load', () => {
 
         // Scene
         oScene: {
-            cStartingScene: GameScene
+            oStartingScene: {
+                cScene: GameScene
+            }
         },
         
         // Output
         cOutputManager: FOX.OutputPixiJS,
         oOutput: <FOX.IOutputPixiJSOptions>{
             nAspectType: FOX.OUTPUT_ASPECT_TYPE.KEEP_RATIO_AND_EXTEND,
-            nWidth: 816,
-            nHeight: 612,
             
             // PIXI Options
             oRenderer: {

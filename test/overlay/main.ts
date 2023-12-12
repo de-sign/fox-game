@@ -57,7 +57,10 @@ window.addEventListener('load', () => {
 
         // Scene
         oScene: {
-            cStartingScene: GameScene
+            sDefaultTransition: 'FADE',
+            oStartingScene: {
+                cScene: GameScene,
+            }
         },
         
         // Output
@@ -75,10 +78,12 @@ window.addEventListener('load', () => {
         }
     } );
     window['oGame'] = oGame;
+    window['FOX'] = FOX;
 
     // Event
     oGame.once(FOX.EVENT_NAME.ENGINE_START, () => {
         FOX.HTML.oBody.addClass('--started');
+        console.log(FOX);
     } );
     
     // Load Assets
@@ -88,6 +93,23 @@ window.addEventListener('load', () => {
     } );
     PIXI.Assets.loadBundle('GameScene').then( () => {
         oGame.start();
+    } );
+
+    // Transitions
+    FOX.OutputTransition.define( {
+        FADE: {
+            oTarget: FOX.HTML.get('PauseScene'),
+            oEffects: {
+                IN: function(fResolve) {
+                    this.oTarget.addClass('--appear');
+                    setTimeout( () => fResolve, 500 );
+                },
+                OUT: function(fResolve) {
+                    this.oTarget.removeClass('--appear');
+                    setTimeout( () => fResolve, 500 );
+                }
+            }
+        }
     } );
 
 } );

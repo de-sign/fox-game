@@ -17,3 +17,10 @@ export type TFlagList = TObject<boolean[]>;
 // Type for Value
 export type TValue = TObject<number>;
 export type TValueList = TObject<number[]>;
+
+// Type for Callback
+export type TCallback = (...args: any[]) => void;
+
+// Type for Constructor 
+// @ts-ignore
+export type TNewOutputManager = new (oEngine: Engine, oOutputOptions?: IOutputOptions) => OutputManager;

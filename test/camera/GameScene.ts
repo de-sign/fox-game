@@ -26,22 +26,6 @@ export class GameScene extends FOX.ScenePixiJS {
 
         // Controller
         this._oControllerSet = this.oInput.oControllersSet;
-
-        // Sprites
-            // Background
-            /*
-        const oResolution = this.oOutput.oResolution;
-        this._oBackGround = PIXI.TilingSprite.from('background', { width: oResolution.width, height: oResolution.height });
-        this.oWorld.addChild(this._oBackGround);
-
-        this.oCamera.on( FOX.EVENT_NAME.CAMERA_UPDATE, () => {
-            const oCameraBounds = this.oCamera.getBounds();
-            this._oBackGround.width = oCameraBounds.width;
-            this._oBackGround.height = oCameraBounds.height;
-            this._oBackGround.position.set(oCameraBounds.x, oCameraBounds.y);
-            this._oBackGround.tilePosition.set(-oCameraBounds.x, -oCameraBounds.y);
-        } );
-        */
        
         this._oBackGround = PIXI.TilingSprite.from('background', { width: 1024 * 3, height: 1024 * 2 });
         this.oWorld.addChild(this._oBackGround);

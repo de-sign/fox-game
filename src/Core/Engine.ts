@@ -1,13 +1,14 @@
 // Imports
 import EventEmitter from 'eventemitter3';
-import { Ticker, UPDATE_PRIORITY } from 'pixi.js';
+import * as PIXI from 'pixi.js';
+import * as TWEEN from '@tweenjs/tween.js';
 
-import { TListeners } from './Type';
+import { TListeners, TNewOutputManager } from './Type';
 import { EVENT_NAME } from './Constants';
 import { Store, IStoreOptions } from './Store';
 import { InputManager, IInputOptions } from '../Input/';
-import { SceneManager, ISceneOptions } from '../Scene/';
-import { OutputManager, IOutputOptions } from '../Output/';
+import { SceneManager, ISceneManagerOptions } from '../Scene/';
+import { OutputManager, IOutputOptions, OutputPixiJS } from '../Output/';
 
 
 /**
@@ -15,16 +16,17 @@ import { OutputManager, IOutputOptions } from '../Output/';
  */
 export interface IEngineOptions {
     bDebugMode?: boolean,
-    cOutputManager?: new (oEngine: Engine, oOutputOptions?: IOutputOptions) => OutputManager,
+    cOutputManager?: TNewOutputManager,
 
     oStore?: IStoreOptions,
     oInput?: IInputOptions,
-    oScene?: ISceneOptions,
+    oScene?: ISceneManagerOptions,
     oOutput?: IOutputOptions
 }
 
 const oDefaultEngineOptions = {
-    bDebugMode: false
+    bDebugMode: false,
+    cOutputManager: OutputPixiJS
 };
 
 
@@ -43,7 +45,7 @@ export class Engine extends EventEmitter {
      * performance.now(): this.oTicker.lastTime + this.oTicker.elapsedMS
      * Date.now(): performance.timeOrigin + this.oTicker.lastTime + this.oTicker.elapsedMS
     */
-    public oTicker: Ticker = new Ticker();
+    public oTicker: PIXI.Ticker = new PIXI.Ticker();
     /** Store Manager */
     public oStore: Store;
 
@@ -78,11 +80,7 @@ export class Engine extends EventEmitter {
         // Scene
         this.oScene = new SceneManager(this, this._oOptions.oScene);
         // Output
-        if( this._oOptions?.cOutputManager ){
-            this.oOutput = new this._oOptions.cOutputManager(this, this._oOptions.oOutput);
-        } else {
-            this.oOutput = new OutputManager(this, <IOutputOptions>oEngineOptions);
-        }
+        this.oOutput = new (this._oOptions.cOutputManager as TNewOutputManager)(this, this._oOptions.oOutput);
 
         // Event
         this.oScene
@@ -95,7 +93,7 @@ export class Engine extends EventEmitter {
 
         // Ticker
         this.oTicker.add( this._update, this );
-        this.oTicker.add( this._render, this, UPDATE_PRIORITY.LOW );
+        this.oTicker.add( this._render, this, PIXI.UPDATE_PRIORITY.LOW );
 
         // Debug
         if( this.isDebugMode() ){
@@ -200,6 +198,8 @@ export class Engine extends EventEmitter {
         // Trigger
         this.emit(EVENT_NAME.ENGINE_RENDER);
 
+        // TweenJs Update
+        TWEEN.update( this.oTicker.elapsedMS );
         // RENDER des entités externe au moteur graphique utilisé
         this.oScene.render();
         // RENDER visuel via Output

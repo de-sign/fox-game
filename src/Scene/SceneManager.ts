@@ -6,16 +6,27 @@ import { Engine } from '../Core/';
 import { Scene } from './';
 
 
-/**
- * Scene options supplied to constructor.
- */
 export interface ISceneOptions {
-    cStartingScene: new (oMScene: SceneManager) => Scene,
-    aStartingSceneArguments?: [],
+    cScene: new (oMScene: SceneManager) => Scene,
+    aArguments?: [],
+    sTransition?: string
 }
 
 const oDefaultSceneOptions = {
-    aStartingSceneArguments: []
+    aArguments: []
+};
+
+
+/**
+ * Scene Manager options supplied to constructor.
+ */
+export interface ISceneManagerOptions {
+    oStartingScene: ISceneOptions,
+    sDefaultTransition?: string
+}
+
+const oDefaultSceneManagerOptions = {
+    sDefaultTransition: 'NONE'
 };
 
 
@@ -26,44 +37,44 @@ export class SceneManager extends EventEmitter {
     public oEngine: Engine;
 
     /** Current Scene updated and rendered */
-    public get oScene(): Scene | null {
+    public get oCurrentScene(): Scene | null {
         return this._aScenes[ this._aScenes.length - 1 ];
     }
 
 
     /** Scene option */
-    private _oOptions: ISceneOptions;
+    private _oOptions: ISceneManagerOptions;
     /** Stack of Scene */
     private _aScenes: Scene[] = [];
 
 
-    constructor(oEngine: Engine, oSceneOptions?: ISceneOptions) {
+    constructor(oEngine: Engine, oSceneManagerOptions?: ISceneManagerOptions) {
 
         super();
 
         this.oEngine = oEngine;
 
         // Options par défaut
-        this._oOptions = Object.assign( {}, oDefaultSceneOptions, oSceneOptions );
+        this._oOptions = Object.assign( {}, oDefaultSceneManagerOptions, oSceneManagerOptions );
         
         // Event
         this.oEngine.once(EVENT_NAME.ENGINE_START, () => {
             // Scene
-            if( this._oOptions.cStartingScene ){
-                this.changeScene(this._oOptions.cStartingScene, ...this._oOptions.aStartingSceneArguments || []);
+            if( this._oOptions.oStartingScene ){
+                this.changeScene(this._oOptions.oStartingScene);
             }
         } );
     }
 
     destroy(): void {
-        this._unsetScene();
         this.removeAllListeners();
+        this._unsetScene();
     }
 
 
     /** Update Current Scene */
     public update(): void {
-        const oScene = this.oScene;
+        const oScene = this.oCurrentScene;
         if( oScene ){
             oScene.update();
         }
@@ -74,7 +85,7 @@ export class SceneManager extends EventEmitter {
 
     /** Render Current Scene */
     public render(): void {
-        const oScene = this.oScene;
+        const oScene = this.oCurrentScene;
         if( oScene ){
             oScene.render();
         }
@@ -85,16 +96,19 @@ export class SceneManager extends EventEmitter {
     
 
     /** Change Current Scene with a new Scene */
-    public changeScene(oNewScene: new (oMScene: SceneManager) => Scene, ...aArguments: []): void {
+    public changeScene(oSceneOptions: ISceneOptions): void {
+
+        const oOptions = Object.assign( { sTransition: this._oOptions.sDefaultTransition }, oDefaultSceneOptions, oSceneOptions );
+
         this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
             // Enlève et détruit la scène courante
             this._unsetScene();
 
             // Ajoute la nouvelle scène et la défini comme courante
-            this._setScene(oNewScene, aArguments);
+            this._setScene(oOptions.cScene, oOptions.aArguments);
 
             // Trigger
-            this.emit(EVENT_NAME.SCENE_CHANGE, this.oScene);
+            this.emit(EVENT_NAME.SCENE_CHANGE, this.oCurrentScene);
         } );
     }
 
@@ -102,13 +116,16 @@ export class SceneManager extends EventEmitter {
      * Add a new Scene like Current and stock last Scene.
      * Used for create Overlay Scene like pause, menu etc ...
      */
-    public stackScene(oNewScene: new (oMScene: SceneManager) => Scene, ...aArguments: []): void {
+    public stackScene(oSceneOptions: ISceneOptions): void {
+
+        const oOptions = Object.assign( { sTransition: this._oOptions.sDefaultTransition }, oDefaultSceneOptions, oSceneOptions );
+
         this.oEngine.once(EVENT_NAME.ENGINE_UPDATE, () => {
             // Trigger
-            this.oScene?.emit(EVENT_NAME.SCENE_BLUR);
+            this.oCurrentScene?.emit(EVENT_NAME.SCENE_BLUR);
 
             // Ajoute la nouvelle scène et la défini comme courante
-            this._setScene(oNewScene, aArguments);
+            this._setScene(oOptions.cScene, oOptions.aArguments);
         } );
     }
 
@@ -123,11 +140,22 @@ export class SceneManager extends EventEmitter {
                 this._unsetScene();
                 
                 // Trigger
-                this.oScene?.emit(EVENT_NAME.SCENE_FOCUS);
+                this.oCurrentScene?.emit(EVENT_NAME.SCENE_FOCUS);
             }
         } );
     }
 
+    /** Add New Scene like current. */
+    private _setScene(oNewScene: new (oMScene: SceneManager) => Scene, aArguments: []): void {
+        
+        // Créer la nouvelle scène, l'ajoute et la défini comme courante
+        const oScene = new oNewScene(this);
+        oScene.initialize.apply(oScene, aArguments);
+        this._aScenes.push(oScene);
+
+        // Trigger
+        this.emit(EVENT_NAME.SCENE_INITIALIZE, oScene);
+    }
 
     /** Remove and destroy current Scene. */
     private _unsetScene(): void {
@@ -141,16 +169,5 @@ export class SceneManager extends EventEmitter {
             this.emit(EVENT_NAME.SCENE_DESTROY, oScene);
         }
     }
-
-    /** Add New Scene like current. */
-    private _setScene(oNewScene: new (oMScene: SceneManager) => Scene, aArguments: []): void {
-            
-        // Créer la nouvelle scène, l'ajoute et la défini comme courante
-        const oScene = new oNewScene(this);
-        oScene.initialize.apply(oScene, aArguments);
-        this._aScenes.push(oScene);
-
-        // Trigger
-        this.emit(EVENT_NAME.SCENE_INITIALIZE, oScene);
-    }
+    
 }
