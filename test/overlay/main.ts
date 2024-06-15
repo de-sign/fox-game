@@ -95,21 +95,4 @@ window.addEventListener('load', () => {
         oGame.start();
     } );
 
-    // Transitions
-    FOX.OutputTransition.define( {
-        FADE: {
-            oTarget: FOX.HTML.get('PauseScene'),
-            oEffects: {
-                IN: function(fResolve) {
-                    this.oTarget.addClass('--appear');
-                    setTimeout( () => fResolve, 500 );
-                },
-                OUT: function(fResolve) {
-                    this.oTarget.removeClass('--appear');
-                    setTimeout( () => fResolve, 500 );
-                }
-            }
-        }
-    } );
-
 } );

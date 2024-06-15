@@ -75,7 +75,7 @@ export class SceneManager extends EventEmitter {
     /** Update Current Scene */
     public update(): void {
         const oScene = this.oCurrentScene;
-        if( oScene ){
+        if( oScene && !oScene.isFrozen() ){
             oScene.update();
         }
 

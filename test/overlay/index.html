@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Fox Game</title>
+	</head>
+	<body>
+		<section id="GameScene" class="DS__Scene">
+			<a id="GameMenuButton" class="DS__Button">Menu</a>
+		</section>
+
+		<section id="PauseScene" class="DS__Scene" hidden>
+			<h1 class="DS__Logo">
+				<div class="DS__Logo_Small">Fox</div>
+				<div>Engine</div>
+			</h1>
+			<div id="PauseMenu" class="--align-center">
+				<ul>
+					<li class="Menu_Item" data-menu-cancel>Resume</li>
+					<li class="Menu_Item">Settings</li>
+				</ul>
+				<ul>
+					<li class="Menu_Item">Github</li>
+				</ul>
+			</div>
+		</section>
+		
+		<script type="module" src="/test/overlay/main.ts"></script>
+	</body>
+</html>

@@ -4,6 +4,3 @@ export * from './OutputPixiJS';
 
 // Camera
 export * from './CameraPixiJS';
-
-// Transition
-export * from './OutputEffect';

@@ -26,6 +26,8 @@ export abstract class Scene extends EventEmitter {
     /** Output Manager */
     public oOutput: OutputManager;
 
+    protected _bFreeze: boolean = false;
+
 
     /** Constructor */
     constructor(oMScene: SceneManager) {
@@ -61,4 +63,17 @@ export abstract class Scene extends EventEmitter {
      * }
      */
     public render(): void { }
+
+
+    public freeze(): void {
+        this._bFreeze = true;
+    }
+
+    public unfreeze(): void {
+        this._bFreeze = false;
+    }
+
+    public isFrozen(){
+        return this._bFreeze;
+    }
 }

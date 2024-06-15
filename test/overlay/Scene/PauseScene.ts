@@ -34,6 +34,8 @@ export class PauseScene extends FOX.Scene {
         if( oHLayout ){
             this._oHLayout = oHLayout;
             oHLayout.bHidden = false;
+            this.oEngine.once( FOX.EVENT_NAME.ENGINE_UPDATE, () => oHLayout.addClass('--appear') );
+            
         }
 
         const oHMenu = FOX.HTML.get('PauseMenu');
@@ -45,7 +47,9 @@ export class PauseScene extends FOX.Scene {
 
             this._oMenu
                 .on(FOX.EVENT_NAME.MENU_CANCEL, () => {
-                    this.oScene.unstackScene();
+                    this.freeze();
+                    this._oHLayout?.removeClass('--appear');
+                    setTimeout( () => this.oScene.unstackScene(), 500 );
                 } )
                 .on(FOX.EVENT_NAME.MENU_VALIDATE, nIndex => {
                     switch( nIndex ){
